@@ -1,18 +1,702 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:fillViewport="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        tools:context=".MainActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Spinner
+            android:id="@+id/atkDiceCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/atkDiceLabel"
+            app:layout_constraintStart_toEndOf="@+id/atkDiceLabel"
+            app:layout_constraintTop_toTopOf="@+id/atkDiceLabel" />
+
+        <TextView
+            android:id="@+id/atkDiceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="19dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/dice_question"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkSectionLabel" />
+
+        <TextView
+            android:id="@+id/atkDiceType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/dice_d6"
+            app:layout_constraintBottom_toBottomOf="@+id/atkDiceCount"
+            app:layout_constraintStart_toEndOf="@+id/atkDiceCount"
+            app:layout_constraintTop_toTopOf="@+id/atkDiceCount" />
+
+        <Button
+            android:id="@+id/rollButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="calculate"
+            android:text="@string/roll"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defArmourRange" />
+
+        <TextView
+            android:id="@+id/atkBaseRollResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/zero"
+            app:layout_constraintBottom_toBottomOf="@+id/atkBaseRollResultLabel"
+            app:layout_constraintStart_toEndOf="@+id/atkBaseRollResultLabel"
+            app:layout_constraintTop_toTopOf="@+id/atkBaseRollResultLabel" />
+
+        <CheckBox
+            android:id="@+id/atkChallengeToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="toggleChallenge"
+            android:tag="ATTACKER"
+            android:text="@string/add_d20"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkDiceLabel" />
+
+        <TextView
+            android:id="@+id/atkChallengeRollResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/zero"
+            app:layout_constraintBottom_toBottomOf="@+id/atkChallengeResultLabel"
+            app:layout_constraintStart_toEndOf="@+id/atkChallengeResultLabel"
+            app:layout_constraintTop_toTopOf="@+id/atkChallengeResultLabel" />
+
+        <TextView
+            android:id="@+id/atkSectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/attacker_section"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/atkBonusLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:height="19dp"
+            android:text="@string/bonus"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkChallengeToggle" />
+
+        <EditText
+            android:id="@+id/atkBonusAmount"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="numberSigned"
+            android:maxLength="3"
+            app:layout_constraintBottom_toBottomOf="@+id/atkBonusLabel"
+            app:layout_constraintStart_toEndOf="@+id/atkBonusLabel"
+            app:layout_constraintTop_toTopOf="@+id/atkBonusLabel" />
+
+        <TextView
+            android:id="@+id/atkDamageTierLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="28dp"
+            android:text="@string/damage_tiers"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkBonusLabel" />
+
+        <EditText
+            android:id="@+id/atkLowDamage"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            app:layout_constraintBottom_toBottomOf="@+id/atkDamageTierLabel"
+            app:layout_constraintStart_toEndOf="@+id/atkDamageTierLabel"
+            app:layout_constraintTop_toTopOf="@+id/atkDamageTierLabel" />
+
+        <EditText
+            android:id="@+id/atkHighDamage"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            app:layout_constraintBottom_toBottomOf="@+id/atkDamageTierLabel"
+            app:layout_constraintStart_toEndOf="@+id/atkMedDamage"
+            app:layout_constraintTop_toTopOf="@+id/atkDamageTierLabel" />
+
+        <EditText
+            android:id="@+id/atkMedDamage"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            app:layout_constraintBottom_toBottomOf="@+id/atkDamageTierLabel"
+            app:layout_constraintStart_toEndOf="@+id/atkLowDamage"
+            app:layout_constraintTop_toTopOf="@+id/atkDamageTierLabel" />
+
+        <TextView
+            android:id="@+id/atkDamageResult1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/zero"
+            app:layout_constraintBottom_toBottomOf="@+id/atkDamageResult1Label"
+            app:layout_constraintStart_toEndOf="@+id/atkDamageResult1Label"
+            app:layout_constraintTop_toTopOf="@+id/atkDamageResult1Label" />
+
+        <TextView
+            android:id="@+id/defArmourRange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/armour_range"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defPassDefLabel" />
+
+        <EditText
+            android:id="@+id/defArmourHigh"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            app:layout_constraintBottom_toBottomOf="@+id/defArmourLow"
+            app:layout_constraintStart_toEndOf="@+id/defArmourLow"
+            app:layout_constraintTop_toTopOf="@+id/defArmourLow" />
+
+        <EditText
+            android:id="@+id/defArmourLow"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            app:layout_constraintBottom_toBottomOf="@+id/defArmourRange"
+            app:layout_constraintStart_toEndOf="@+id/defArmourRange"
+            app:layout_constraintTop_toTopOf="@+id/defArmourRange" />
+
+        <TextView
+            android:id="@+id/defDamageTierLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="28dp"
+            android:text="@string/damage_tiers"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defBonusLabel" />
+
+        <EditText
+            android:id="@+id/defLowDamage"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            app:layout_constraintBottom_toBottomOf="@+id/defDamageTierLabel"
+            app:layout_constraintStart_toEndOf="@+id/defDamageTierLabel"
+            app:layout_constraintTop_toTopOf="@+id/defDamageTierLabel" />
+
+        <EditText
+            android:id="@+id/defHighDamage"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            app:layout_constraintBottom_toBottomOf="@+id/defDamageTierLabel"
+            app:layout_constraintStart_toEndOf="@+id/defMedDamage"
+            app:layout_constraintTop_toTopOf="@+id/defDamageTierLabel" />
+
+        <EditText
+            android:id="@+id/defMedDamage"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            app:layout_constraintBottom_toBottomOf="@+id/defDamageTierLabel"
+            app:layout_constraintStart_toEndOf="@+id/defLowDamage"
+            app:layout_constraintTop_toTopOf="@+id/defDamageTierLabel" />
+
+        <TextView
+            android:id="@+id/defPassDefLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/passive_defense"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defDamageTierLabel" />
+
+        <EditText
+            android:id="@+id/defPassiveDef"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            app:layout_constraintBottom_toBottomOf="@+id/defPassDefLabel"
+            app:layout_constraintStart_toEndOf="@+id/defPassDefLabel"
+            app:layout_constraintTop_toTopOf="@+id/defPassDefLabel"
+            app:layout_constraintVertical_bias="0.615" />
+
+        <TextView
+            android:id="@+id/atkBaseRollResultLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/atk_roll_result_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rollButton" />
+
+        <TextView
+            android:id="@+id/atkChallengeResultLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/atk_challenge_result_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkBaseRollResultLabel" />
+
+        <TextView
+            android:id="@+id/atkRollTotal1Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/atk_total_1_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkChallengeResultLabel" />
+
+        <TextView
+            android:id="@+id/atkRollTotal1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/zero"
+            app:layout_constraintBottom_toBottomOf="@+id/atkRollTotal1Label"
+            app:layout_constraintStart_toEndOf="@+id/atkRollTotal1Label"
+            app:layout_constraintTop_toTopOf="@+id/atkRollTotal1Label" />
+
+        <TextView
+            android:id="@+id/defOptionChoiceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/no_def_option_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defRollTotalLabel" />
+
+        <TextView
+            android:id="@+id/defOptionResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text=""
+            app:layout_constraintBottom_toBottomOf="@+id/defOptionChoiceLabel"
+            app:layout_constraintStart_toEndOf="@+id/defOptionChoiceLabel"
+            app:layout_constraintTop_toTopOf="@+id/defOptionChoiceLabel" />
+
+        <TextView
+            android:id="@+id/defBaseRollResultLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/def_roll_result_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkRollTotal1Label" />
+
+        <TextView
+            android:id="@+id/defBaseRollResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/zero"
+            app:layout_constraintBottom_toBottomOf="@+id/defBaseRollResultLabel"
+            app:layout_constraintStart_toEndOf="@+id/defBaseRollResultLabel"
+            app:layout_constraintTop_toTopOf="@+id/defBaseRollResultLabel" />
+
+        <TextView
+            android:id="@+id/defChallengeResultLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/def_challenge_result_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defBaseRollResultLabel" />
+
+        <TextView
+            android:id="@+id/defChallengeRollResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/zero"
+            app:layout_constraintBottom_toBottomOf="@+id/defChallengeResultLabel"
+            app:layout_constraintStart_toEndOf="@+id/defChallengeResultLabel"
+            app:layout_constraintTop_toTopOf="@+id/defChallengeResultLabel" />
+
+        <TextView
+            android:id="@+id/defRollTotalLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/def_total_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defChallengeResultLabel" />
+
+        <TextView
+            android:id="@+id/defRollTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/zero"
+            app:layout_constraintBottom_toBottomOf="@+id/defRollTotalLabel"
+            app:layout_constraintStart_toEndOf="@+id/defRollTotalLabel"
+            app:layout_constraintTop_toTopOf="@+id/defRollTotalLabel" />
+
+        <TextView
+            android:id="@+id/atkRollTotal2Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/atk_total_2_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defOptionChoiceLabel" />
+
+        <TextView
+            android:id="@+id/atkRollTotal2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/zero"
+            app:layout_constraintBottom_toBottomOf="@+id/atkRollTotal2Label"
+            app:layout_constraintStart_toEndOf="@+id/atkRollTotal2Label"
+            app:layout_constraintTop_toTopOf="@+id/atkRollTotal2Label" />
+
+        <TextView
+            android:id="@+id/atkDamageResult1Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/damage_result_1_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkRollTotal2Label" />
+
+        <TextView
+            android:id="@+id/atkDamageResult2Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/damage_result_2_label"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkDamageResult1Label" />
+
+        <TextView
+            android:id="@+id/atkDamageResult2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/zero"
+            app:layout_constraintBottom_toBottomOf="@+id/atkDamageResult2Label"
+            app:layout_constraintStart_toEndOf="@+id/atkDamageResult2Label"
+            app:layout_constraintTop_toTopOf="@+id/atkDamageResult2Label" />
+
+        <TextView
+            android:id="@+id/atkCostLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:text="@string/challenge_cost"
+            app:layout_constraintBottom_toBottomOf="@+id/atkChallengeToggle"
+            app:layout_constraintStart_toEndOf="@+id/atkChallengeToggle"
+            app:layout_constraintTop_toTopOf="@+id/atkChallengeToggle" />
+
+        <EditText
+            android:id="@+id/atkChallengeCost"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            app:layout_constraintBottom_toBottomOf="@+id/atkCostLabel"
+            app:layout_constraintStart_toEndOf="@+id/atkCostLabel"
+            app:layout_constraintTop_toTopOf="@+id/atkCostLabel" />
+
+        <TextView
+            android:id="@+id/atkPassDefLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/passive_defense"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkDamageTierLabel" />
+
+        <EditText
+            android:id="@+id/atkPassiveDef"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            app:layout_constraintBottom_toBottomOf="@+id/atkPassDefLabel"
+            app:layout_constraintStart_toEndOf="@+id/atkPassDefLabel"
+            app:layout_constraintTop_toTopOf="@+id/atkPassDefLabel" />
+
+        <TextView
+            android:id="@+id/atkArmourRange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/armour_range"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkPassDefLabel" />
+
+        <EditText
+            android:id="@+id/atkArmourLow"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            app:layout_constraintBottom_toBottomOf="@+id/atkArmourRange"
+            app:layout_constraintStart_toEndOf="@+id/atkArmourRange"
+            app:layout_constraintTop_toTopOf="@+id/atkArmourRange" />
+
+        <EditText
+            android:id="@+id/atkArmourHigh"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            app:layout_constraintBottom_toBottomOf="@+id/atkArmourLow"
+            app:layout_constraintStart_toEndOf="@+id/atkArmourLow"
+            app:layout_constraintTop_toTopOf="@+id/atkArmourLow" />
+
+        <TextView
+            android:id="@+id/defSectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/defender_section"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkArmourRange" />
+
+        <TextView
+            android:id="@+id/defOptionSpinnerLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/def_option_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defSectionLabel" />
+
+        <Spinner
+            android:id="@+id/defOption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/defOptionSpinnerLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/defOptionSpinnerLabel"
+            app:layout_constraintTop_toTopOf="@+id/defOptionSpinnerLabel" />
+
+        <TextView
+            android:id="@+id/defDiceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/dice_question"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defOptionSpinnerLabel" />
+
+        <CheckBox
+            android:id="@+id/defChallengeToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="toggleChallenge"
+            android:tag="DEFENDER"
+            android:text="@string/add_d20"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defDiceLabel" />
+
+        <TextView
+            android:id="@+id/defCostLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:text="@string/challenge_cost"
+            app:layout_constraintBottom_toBottomOf="@+id/defChallengeToggle"
+            app:layout_constraintStart_toEndOf="@+id/defChallengeToggle"
+            app:layout_constraintTop_toTopOf="@+id/defChallengeToggle" />
+
+        <EditText
+            android:id="@+id/defChallengeCost"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            app:layout_constraintBottom_toBottomOf="@+id/defCostLabel"
+            app:layout_constraintStart_toEndOf="@+id/defCostLabel"
+            app:layout_constraintTop_toTopOf="@+id/defCostLabel" />
+
+        <TextView
+            android:id="@+id/defBonusLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/bonus"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defChallengeToggle" />
+
+        <Spinner
+            android:id="@+id/defDiceCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/defDiceLabel"
+            app:layout_constraintStart_toEndOf="@+id/defDiceLabel"
+            app:layout_constraintTop_toTopOf="@+id/defDiceLabel" />
+
+        <TextView
+            android:id="@+id/defDiceType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/dice_d6"
+            app:layout_constraintBottom_toBottomOf="@+id/defDiceCount"
+            app:layout_constraintStart_toEndOf="@+id/defDiceCount"
+            app:layout_constraintTop_toTopOf="@+id/defDiceCount" />
+
+        <EditText
+            android:id="@+id/defBonusAmount"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="3"
+            app:layout_constraintBottom_toBottomOf="@+id/defBonusLabel"
+            app:layout_constraintStart_toEndOf="@+id/defBonusLabel"
+            app:layout_constraintTop_toTopOf="@+id/defBonusLabel" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
