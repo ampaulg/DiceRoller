@@ -472,7 +472,6 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="4dp"
             android:text="@string/damage_result_2_label"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/atkDamageResult1Label" />
 
@@ -486,6 +485,110 @@
             app:layout_constraintBottom_toBottomOf="@+id/atkDamageResult2Label"
             app:layout_constraintStart_toEndOf="@+id/atkDamageResult2Label"
             app:layout_constraintTop_toTopOf="@+id/atkDamageResult2Label" />
+
+        <CheckBox
+            android:id="@+id/atkRollSetterCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="toggleSetter"
+            android:tag="ATK_ROLL"
+            android:text="@string/atk_roll_setter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkDamageResult2Label" />
+
+        <EditText
+            android:id="@+id/atkRollSetter"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            app:layout_constraintBottom_toBottomOf="@+id/atkRollSetterCheckbox"
+            app:layout_constraintStart_toEndOf="@+id/atkRollSetterCheckbox"
+            app:layout_constraintTop_toTopOf="@+id/atkRollSetterCheckbox" />
+
+        <CheckBox
+            android:id="@+id/atkChallengeSetterCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="toggleSetter"
+            android:tag="ATK_CHALLENGE"
+            android:text="@string/atk_challenge_setter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkRollSetterCheckbox" />
+
+        <EditText
+            android:id="@+id/atkChallengeSetter"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            app:layout_constraintBottom_toBottomOf="@+id/atkChallengeSetterCheckbox"
+            app:layout_constraintStart_toEndOf="@+id/atkChallengeSetterCheckbox"
+            app:layout_constraintTop_toTopOf="@+id/atkChallengeSetterCheckbox" />
+
+        <CheckBox
+            android:id="@+id/defRollSetterCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="toggleSetter"
+            android:tag="DEF_ROLL"
+            android:text="@string/def_roll_setter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atkChallengeSetterCheckbox" />
+
+        <EditText
+            android:id="@+id/defRollSetter"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            app:layout_constraintBottom_toBottomOf="@+id/defRollSetterCheckbox"
+            app:layout_constraintStart_toEndOf="@+id/defRollSetterCheckbox"
+            app:layout_constraintTop_toTopOf="@+id/defRollSetterCheckbox" />
+
+        <CheckBox
+            android:id="@+id/defChallengeSetterCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="toggleSetter"
+            android:tag="DEF_CHALLENGE"
+            android:text="@string/def_challenge_setter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/defRollSetterCheckbox" />
+
+        <EditText
+            android:id="@+id/defChallengeSetter"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            app:layout_constraintBottom_toBottomOf="@+id/defChallengeSetterCheckbox"
+            app:layout_constraintStart_toEndOf="@+id/defChallengeSetterCheckbox"
+            app:layout_constraintTop_toTopOf="@+id/defChallengeSetterCheckbox" />
 
         <TextView
             android:id="@+id/atkCostLabel"

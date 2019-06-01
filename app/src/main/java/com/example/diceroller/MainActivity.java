@@ -49,9 +49,9 @@ public class MainActivity extends AppCompatActivity {
             int defRollTotal = getRollResult( Constants.Player.DEFENDER );
 
             if ( defOption == Constants.DefOption.DODGE ) {
-                evasionModifier = defRollTotal;
+                evasionModifier = getDodgeResult( defRollTotal );
             } else { // Intercept
-                evasionModifier = getDamageResult( defRollTotal, Constants.Player.DEFENDER );
+                evasionModifier = getAttackResult( defRollTotal, Constants.Player.ATTACKER );
             }
 
             writeNumber( R.id.defRollTotal, defRollTotal );
@@ -60,14 +60,15 @@ public class MainActivity extends AppCompatActivity {
         int atkRollResult2 = Math.max( atkRollResult1 - evasionModifier, 0 );
         writeNumber( R.id.atkRollTotal2, atkRollResult2 );
 
-        int atkDamage1 = getDamageResult( atkRollResult2, Constants.Player.ATTACKER );
+        int atkDamage1 = getAttackResult( atkRollResult2, Constants.Player.DEFENDER );
         writeNumber( R.id.atkDamageResult1, atkDamage1 );
 
         int atkDamage2;
         int deflectModifier = 0;
         if ( defOption == Constants.DefOption.DEFLECT ) {
-            deflectModifier = getRollResult( Constants.Player.DEFENDER );
-            writeNumber( R.id.defRollTotal, deflectModifier );
+            int defRoll = getRollResult( Constants.Player.DEFENDER );
+            deflectModifier = ( int ) Math.ceil( defRoll / Constants.DEFLECT_SCALE );
+            writeNumber( R.id.defRollTotal, defRoll );
             writeNumber( R.id.defOptionResult, deflectModifier);
         }
         atkDamage2 = Math.max( atkDamage1 - deflectModifier, 0 );
@@ -84,9 +85,37 @@ public class MainActivity extends AppCompatActivity {
         outputView.setText( getText( outputStringId ) );
     }
 
+    private int getDodgeResult( int defRoll ) {
+        Constants.DamageTier tier = getDamageTier( defRoll, Constants.Player.DEFENDER );
+        int dodgeResult;
+        switch ( tier ) {
+            case NONE:
+                dodgeResult = Constants.DODGE_LOW;
+                break;
+            case ONE:
+                dodgeResult = Constants.DODGE_LOW;
+                break;
+            case LOW:
+                dodgeResult = Constants.DODGE_LOW;
+                break;
+            case MED:
+                dodgeResult = Constants.DODGE_MED;
+                break;
+            case HIGH:
+                dodgeResult = Constants.DODGE_HIGH;
+                break;
+            default:
+                throw new IllegalArgumentException( "Invalid damage tier" );
+        }
+        return dodgeResult;
+    }
+
     private void setDefOptionLabel( Constants.DefOption option ) {
         int defOptionLabelViewId = R.id.defOptionChoiceLabel;
         switch ( option ) {
+            case NONE:
+                writeString( defOptionLabelViewId, R.string.no_def_option_label );
+                break;
             case DODGE:
                 writeString( defOptionLabelViewId, R.string.dodge_result_label );
                 break;
@@ -95,9 +124,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case INTERCEPT:
                 writeString( defOptionLabelViewId, R.string.intercept_result_label );
-                break;
-            default: // None
-                writeString( defOptionLabelViewId, R.string.no_def_option_label );
                 break;
         }
     }
@@ -110,23 +136,35 @@ public class MainActivity extends AppCompatActivity {
         int baseResultViewId;
         int challengeResultViewId;
 
+        CheckBox rollSetterCheckbox;
+        int rollSetterId;
+
         if ( player == Constants.Player.ATTACKER ) {
             countBox = findViewById( R.id.atkDiceCount );
             challengeBox = findViewById( R.id.atkChallengeToggle );
             bonus = getIntInputValue( R.id.atkBonusAmount );
             baseResultViewId = R.id.atkBaseRollResult;
             challengeResultViewId = R.id.atkChallengeRollResult;
-
+            rollSetterCheckbox = findViewById( R.id.atkRollSetterCheckbox );
+            rollSetterId = R.id.atkRollSetter;
         } else {
             countBox = findViewById( R.id.defDiceCount );
             challengeBox = findViewById( R.id.defChallengeToggle );
             bonus = getIntInputValue( R.id.defBonusAmount );
             baseResultViewId = R.id.defBaseRollResult;
             challengeResultViewId = R.id.defChallengeRollResult;
+            rollSetterCheckbox = findViewById( R.id.defRollSetterCheckbox );
+            rollSetterId = R.id.defRollSetter;
         }
 
         int count = Integer.parseInt( countBox.getSelectedItem().toString() );
-        int rollResult = rollDice( count, 6 );
+
+        int rollResult;
+        if ( rollSetterCheckbox.isChecked() ) {
+            rollResult = getIntInputValue( rollSetterId );
+        } else {
+            rollResult = rollDice( count, 6 );
+        }
         writeNumber( baseResultViewId, rollResult);
 
         if ( challengeBox.isChecked() ) {
@@ -144,15 +182,29 @@ public class MainActivity extends AppCompatActivity {
         int challengeCost;
         int challengeResultViewId;
 
+        CheckBox challengeSetterCheckbox;
+        int challengeSetterId;
+
         if ( player == Constants.Player.ATTACKER ) {
             challengeCost = getIntInputValue( R.id.atkChallengeCost );
             challengeResultViewId = R.id.atkChallengeRollResult;
+            challengeSetterCheckbox = findViewById( R.id.atkChallengeSetterCheckbox );
+            challengeSetterId = R.id.atkChallengeSetter;
         } else {
             challengeCost = getIntInputValue( R.id.defChallengeCost );
             challengeResultViewId = R.id.defChallengeRollResult;
+            challengeSetterCheckbox = findViewById( R.id.defChallengeSetterCheckbox );
+            challengeSetterId = R.id.defChallengeSetter;
+
         }
 
-        int challengeRoll = rollDice( 1, 20 );
+        int challengeRoll;
+        if ( challengeSetterCheckbox.isChecked() ) {
+            challengeRoll = getIntInputValue( challengeSetterId );
+        } else {
+            challengeRoll = rollDice( 1, 20 );
+        }
+
         int result = 0;
 
         if ( challengeCost > challengeRoll ) {
@@ -174,52 +226,55 @@ public class MainActivity extends AppCompatActivity {
             diceResult += ( rand.nextInt( diceType ) + 1 );
         }
 
-        if ( diceResult == diceCount ) {
+        if ( ( diceType == 6 ) && ( diceResult == diceCount ) ) {
             diceResult = 0;
         }
 
         return diceResult;
     }
 
-    private int getDamageResult( int roll, Constants.Player initiator ) {
-        int damageResult;
+    private int getAttackResult( int roll, Constants.Player target ) {
+        // get tier
+        Constants.DamageTier tier = getDamageTier( roll, target );
+        // get damage for that tier
+        return getDamage( tier, getOtherPlayer( target ) );
+    }
 
-        int lowDamage;
-        int medDamage;
-        int highDamage;
+    private Constants.Player getOtherPlayer( Constants.Player player ) {
+        if ( player == Constants.Player.ATTACKER ) {
+            return Constants.Player.DEFENDER;
+        } else return Constants.Player.ATTACKER;
+    }
+
+    private Constants.DamageTier getDamageTier( int roll, Constants.Player target ) {
         int passiveDef;
         int armourLow;
         int armourHigh;
 
-        if ( initiator == Constants.Player.ATTACKER ) {
-            lowDamage = getIntInputValue( R.id.atkLowDamage );
-            medDamage = getIntInputValue( R.id.atkMedDamage );
-            highDamage = getIntInputValue( R.id.atkHighDamage );
+        if ( target == Constants.Player.DEFENDER ) {
             passiveDef = getIntInputValue( R.id.defPassiveDef );
             armourLow = getIntInputValue( R.id.defArmourLow );
             armourHigh = getIntInputValue( R.id.defArmourHigh );
         } else {
-            lowDamage = getIntInputValue( R.id.defLowDamage );
-            medDamage = getIntInputValue( R.id.defMedDamage );
-            highDamage = getIntInputValue( R.id.defHighDamage );
             passiveDef = getIntInputValue( R.id.atkPassiveDef );
             armourLow = getIntInputValue( R.id.atkArmourLow );
             armourHigh = getIntInputValue( R.id.atkArmourHigh );
         }
 
+        Constants.DamageTier tier;
         if ( roll < passiveDef ) {
-            damageResult = 0;
+            tier = Constants.DamageTier.NONE;
         } else if ( roll == passiveDef ) {
-            damageResult = 1;
+            tier = Constants.DamageTier.ONE;
         } else if ( roll < armourLow ) {
-            damageResult = lowDamage;
+            tier = Constants.DamageTier.LOW;
         } else if ( roll <= armourHigh ) {
-            damageResult = medDamage;
+            tier = Constants.DamageTier.MED;
         } else {
-            damageResult = highDamage;
+            tier = Constants.DamageTier.HIGH;
         }
 
-        return damageResult;
+        return tier;
     }
 
     private boolean checkValidInputs() {
@@ -231,16 +286,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        CheckBox atkChallengeBox = findViewById( R.id.atkChallengeToggle );
-        if ( atkChallengeBox.isChecked() ) {
-            if ( checkInvalidBox( R.id.atkChallengeCost, R.string.challenge_required_field ) ) {
-                errorFound = true;
-            }
-        }
-        CheckBox defChallengeBox = findViewById( R.id.defChallengeToggle );
-        if ( defChallengeBox.isChecked() ) {
-            if ( checkInvalidBox( R.id.defChallengeCost, R.string.challenge_required_field ) ) {
-                errorFound = true;
+        for ( int[] checkbox : Constants.checkBoxValidatorData ) {
+            CheckBox box = findViewById( checkbox[ Constants.CHECKBOX ] );
+            if ( box.isChecked() ) {
+                if ( checkInvalidBox( checkbox[ Constants.FIELD ], checkbox[ Constants.ERROR ] ) ) {
+                    errorFound = true;
+                }
             }
         }
 
@@ -281,6 +332,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void toggleSetter( View view ) {
+        CheckBox box = ( CheckBox ) view;
+        if ( !box.isChecked() ) {
+            Constants.SetterType setter =  Constants.SetterType.valueOf( box.getTag().toString() );
+            switch ( setter ) {
+                case ATK_ROLL:
+                    removeError( R.id.atkRollSetter );
+                    break;
+                case ATK_CHALLENGE:
+                    removeError( R.id.atkChallengeSetter );
+                    break;
+                case DEF_ROLL:
+                    removeError( R.id.defRollSetter );
+                    break;
+                case DEF_CHALLENGE:
+                    removeError( R.id.defChallengeSetter );
+                    break;
+            }
+        }
+    }
+
     private int getIntInputValue( int id ) {
         EditText box = findViewById(id);
         String input = box.getText().toString();
@@ -304,6 +376,44 @@ public class MainActivity extends AppCompatActivity {
     private void removeError( int boxId ) {
         EditText box = findViewById( boxId );
         box.setError( null );
+    }
+
+    private int getDamage( Constants.DamageTier tier, Constants.Player initiator ) {
+        int damage;
+
+        switch ( tier ) {
+            case NONE:
+                damage = 0;
+                break;
+            case ONE:
+                damage = Constants.PASSIVE_DAMAGE;
+                break;
+            case LOW:
+                if ( initiator == Constants.Player.ATTACKER ) {
+                    damage = getIntInputValue( R.id.atkLowDamage );
+                } else {
+                    damage = getIntInputValue( R.id.defLowDamage );
+                }
+                break;
+            case MED:
+                if ( initiator == Constants.Player.ATTACKER ) {
+                    damage = getIntInputValue( R.id.atkMedDamage );
+                } else {
+                    damage = getIntInputValue( R.id.defMedDamage );
+                }
+                break;
+            case HIGH:
+                if ( initiator == Constants.Player.ATTACKER ) {
+                    damage = getIntInputValue( R.id.atkHighDamage );
+                } else {
+                    damage = getIntInputValue( R.id.defHighDamage );
+                }
+                break;
+            default:
+                throw new IllegalArgumentException( "Invalid damage tier" );
+        }
+
+        return damage;
     }
 
     private class DefOptionSelectedListener implements AdapterView.OnItemSelectedListener {

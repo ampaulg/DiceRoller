@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Dice Roller</string>
-    <string name="hello_text">hey gamers</string>
     <string name="attacker_section">Attacker</string>
     <string name="defender_section">Defender</string>
     <string name="dice_question">How many dice?</string>
@@ -31,7 +30,12 @@
     <string name="failed_roll">(Failed)</string>
     <string name="required_field">Required field</string>
     <string name="challenge_required_field">Required field for challenge</string>
+    <string name="setter_required_field">Required field for roll setter</string>
     <string name="intercept_required_field">Required field for intercept</string>
+    <string name="atk_roll_setter">Set atk roll</string>
+    <string name="atk_challenge_setter">Set atk challenge</string>
+    <string name="def_roll_setter">Set def roll</string>
+    <string name="def_challenge_setter">Set def challenge</string>
     <string-array name="dice_count_options">
         <item>1</item>
         <item>2</item>
