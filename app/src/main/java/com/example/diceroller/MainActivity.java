@@ -3,16 +3,12 @@ package com.example.diceroller;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.Locale;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,21 +22,21 @@ public class MainActivity extends AppCompatActivity {
         populateSpinner( R.id.defDiceCount, R.array.dice_count_options );
         populateSpinner( R.id.defOption, R.array.def_options );
         Spinner defOptionSpinner = findViewById( R.id.defOption );
-        defOptionSpinner.setOnItemSelectedListener( new DefOptionSelectedListener() );
+        defOptionSpinner.setOnItemSelectedListener( new DefOptionSelectedListener( this ) );
     }
 
     public void calculate( View view ) {
-        if ( !checkValidInputs() ) {
+        if ( !UiHelper.checkValidInputs( this ) ) {
             return;
         }
 
         int atkRollResult1 = getRollResult( Constants.Player.ATTACKER );
-        writeNumber( R.id.atkRollTotal1, atkRollResult1 );
+        UiHelper.writeNumber( R.id.atkRollTotal1, atkRollResult1, this );
 
         Spinner defOptionSpinner = findViewById( R.id.defOption );
         Constants.DefOption defOption = Constants.DefOption.valueOf(
                 defOptionSpinner.getSelectedItem().toString().toUpperCase() );
-        setDefOptionLabel( defOption );
+        UiHelper.setDefOptionLabel( defOption, this );
 
         int evasionModifier = 0;
         if ( ( defOption == Constants.DefOption.DODGE ) ||
@@ -54,35 +50,25 @@ public class MainActivity extends AppCompatActivity {
                 evasionModifier = getAttackResult( defRollTotal, Constants.Player.ATTACKER );
             }
 
-            writeNumber( R.id.defRollTotal, defRollTotal );
-            writeNumber( R.id.defOptionResult, evasionModifier);
+            UiHelper.writeNumber( R.id.defRollTotal, defRollTotal, this );
+            UiHelper.writeNumber( R.id.defOptionResult, evasionModifier, this );
         }
         int atkRollResult2 = Math.max( atkRollResult1 - evasionModifier, 0 );
-        writeNumber( R.id.atkRollTotal2, atkRollResult2 );
+        UiHelper.writeNumber( R.id.atkRollTotal2, atkRollResult2, this );
 
         int atkDamage1 = getAttackResult( atkRollResult2, Constants.Player.DEFENDER );
-        writeNumber( R.id.atkDamageResult1, atkDamage1 );
+        UiHelper.writeNumber( R.id.atkDamageResult1, atkDamage1, this );
 
         int atkDamage2;
         int deflectModifier = 0;
         if ( defOption == Constants.DefOption.DEFLECT ) {
             int defRoll = getRollResult( Constants.Player.DEFENDER );
             deflectModifier = ( int ) Math.ceil( defRoll / Constants.DEFLECT_SCALE );
-            writeNumber( R.id.defRollTotal, defRoll );
-            writeNumber( R.id.defOptionResult, deflectModifier);
+            UiHelper.writeNumber( R.id.defRollTotal, defRoll, this );
+            UiHelper.writeNumber( R.id.defOptionResult, deflectModifier, this );
         }
         atkDamage2 = Math.max( atkDamage1 - deflectModifier, 0 );
-        writeNumber( R.id.atkDamageResult2, atkDamage2);
-    }
-
-    private void writeNumber( int viewId, int outputNumber ) {
-        TextView outputView = findViewById( viewId );
-        outputView.setText( String.format( Locale.CANADA, "%d", outputNumber ) );
-    }
-
-    private void writeString( int viewId, int outputStringId ) {
-        TextView outputView = findViewById( viewId );
-        outputView.setText( getText( outputStringId ) );
+        UiHelper.writeNumber( R.id.atkDamageResult2, atkDamage2, this );
     }
 
     private int getDodgeResult( int defRoll ) {
@@ -110,24 +96,6 @@ public class MainActivity extends AppCompatActivity {
         return dodgeResult;
     }
 
-    private void setDefOptionLabel( Constants.DefOption option ) {
-        int defOptionLabelViewId = R.id.defOptionChoiceLabel;
-        switch ( option ) {
-            case NONE:
-                writeString( defOptionLabelViewId, R.string.no_def_option_label );
-                break;
-            case DODGE:
-                writeString( defOptionLabelViewId, R.string.dodge_result_label );
-                break;
-            case DEFLECT:
-                writeString( defOptionLabelViewId, R.string.deflect_result_label );
-                break;
-            case INTERCEPT:
-                writeString( defOptionLabelViewId, R.string.intercept_result_label );
-                break;
-        }
-    }
-
     private int getRollResult( Constants.Player player ) {
         Spinner countBox;
         CheckBox challengeBox;
@@ -142,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         if ( player == Constants.Player.ATTACKER ) {
             countBox = findViewById( R.id.atkDiceCount );
             challengeBox = findViewById( R.id.atkChallengeToggle );
-            bonus = getIntInputValue( R.id.atkBonusAmount );
+            bonus = UiHelper.getIntInputValue( R.id.atkBonusAmount, this );
             baseResultViewId = R.id.atkBaseRollResult;
             challengeResultViewId = R.id.atkChallengeRollResult;
             rollSetterCheckbox = findViewById( R.id.atkRollSetterCheckbox );
@@ -150,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             countBox = findViewById( R.id.defDiceCount );
             challengeBox = findViewById( R.id.defChallengeToggle );
-            bonus = getIntInputValue( R.id.defBonusAmount );
+            bonus = UiHelper.getIntInputValue( R.id.defBonusAmount, this );
             baseResultViewId = R.id.defBaseRollResult;
             challengeResultViewId = R.id.defChallengeRollResult;
             rollSetterCheckbox = findViewById( R.id.defRollSetterCheckbox );
@@ -161,16 +129,16 @@ public class MainActivity extends AppCompatActivity {
 
         int rollResult;
         if ( rollSetterCheckbox.isChecked() ) {
-            rollResult = getIntInputValue( rollSetterId );
+            rollResult = UiHelper.getIntInputValue( rollSetterId, this );
         } else {
             rollResult = rollDice( count, 6 );
         }
-        writeNumber( baseResultViewId, rollResult);
+        UiHelper.writeNumber( baseResultViewId, rollResult, this );
 
         if ( challengeBox.isChecked() ) {
             rollResult += challenge( player );
         } else {
-            writeString( challengeResultViewId, R.string.no_roll );
+            UiHelper.writeString( challengeResultViewId, R.string.no_roll, this );
         }
 
         rollResult += bonus;
@@ -186,12 +154,12 @@ public class MainActivity extends AppCompatActivity {
         int challengeSetterId;
 
         if ( player == Constants.Player.ATTACKER ) {
-            challengeCost = getIntInputValue( R.id.atkChallengeCost );
+            challengeCost = UiHelper.getIntInputValue( R.id.atkChallengeCost, this );
             challengeResultViewId = R.id.atkChallengeRollResult;
             challengeSetterCheckbox = findViewById( R.id.atkChallengeSetterCheckbox );
             challengeSetterId = R.id.atkChallengeSetter;
         } else {
-            challengeCost = getIntInputValue( R.id.defChallengeCost );
+            challengeCost = UiHelper.getIntInputValue( R.id.defChallengeCost, this );
             challengeResultViewId = R.id.defChallengeRollResult;
             challengeSetterCheckbox = findViewById( R.id.defChallengeSetterCheckbox );
             challengeSetterId = R.id.defChallengeSetter;
@@ -200,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
 
         int challengeRoll;
         if ( challengeSetterCheckbox.isChecked() ) {
-            challengeRoll = getIntInputValue( challengeSetterId );
+            challengeRoll = UiHelper.getIntInputValue( challengeSetterId, this );
         } else {
             challengeRoll = rollDice( 1, 20 );
         }
@@ -209,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
         if ( challengeCost > challengeRoll ) {
             result = challengeRoll;
-            writeNumber( challengeResultViewId, challengeRoll);
+            UiHelper.writeNumber( challengeResultViewId, challengeRoll, this );
         } else {
             String failResult= challengeRoll + " " + getText( R.string.failed_roll );
             TextView outputView = findViewById( challengeResultViewId );
@@ -252,13 +220,13 @@ public class MainActivity extends AppCompatActivity {
         int armourHigh;
 
         if ( target == Constants.Player.DEFENDER ) {
-            passiveDef = getIntInputValue( R.id.defPassiveDef );
-            armourLow = getIntInputValue( R.id.defArmourLow );
-            armourHigh = getIntInputValue( R.id.defArmourHigh );
+            passiveDef = UiHelper.getIntInputValue( R.id.defPassiveDef, this );
+            armourLow = UiHelper.getIntInputValue( R.id.defArmourLow, this );
+            armourHigh = UiHelper.getIntInputValue( R.id.defArmourHigh, this );
         } else {
-            passiveDef = getIntInputValue( R.id.atkPassiveDef );
-            armourLow = getIntInputValue( R.id.atkArmourLow );
-            armourHigh = getIntInputValue( R.id.atkArmourHigh );
+            passiveDef = UiHelper.getIntInputValue( R.id.atkPassiveDef, this );
+            armourLow = UiHelper.getIntInputValue( R.id.atkArmourLow, this );
+            armourHigh = UiHelper.getIntInputValue( R.id.atkArmourHigh, this );
         }
 
         Constants.DamageTier tier;
@@ -277,57 +245,14 @@ public class MainActivity extends AppCompatActivity {
         return tier;
     }
 
-    private boolean checkValidInputs() {
-        boolean errorFound = false;
-
-        for ( int viewId : Constants.mandatoryFields ) {
-            if ( checkInvalidBox( viewId, R.string.required_field ) ) {
-                errorFound = true;
-            }
-        }
-
-        for ( int[] checkbox : Constants.checkBoxValidatorData ) {
-            CheckBox box = findViewById( checkbox[ Constants.CHECKBOX ] );
-            if ( box.isChecked() ) {
-                if ( checkInvalidBox( checkbox[ Constants.FIELD ], checkbox[ Constants.ERROR ] ) ) {
-                    errorFound = true;
-                }
-            }
-        }
-
-        Spinner defOptionSpinner = findViewById( R.id.defOption );
-        Constants.DefOption option = Constants.DefOption.valueOf(
-                defOptionSpinner.getSelectedItem().toString().toUpperCase() );
-        if ( option == Constants.DefOption.INTERCEPT ) {
-            for ( int viewId : Constants.interceptMandatoryFields ) {
-                if ( checkInvalidBox( viewId, R.string.intercept_required_field) ) {
-                    errorFound = true;
-                }
-            }
-        }
-
-        return !errorFound;
-    }
-
-    private boolean checkInvalidBox(int boxId, int errorId ) {
-        EditText box = findViewById( boxId );
-        String boxInput = box.getText().toString();
-        if ( TextUtils.isEmpty( boxInput ) ) {
-
-            box.setError( getString( errorId ) );
-            return true;
-        }
-        return false;
-    }
-
     public void toggleChallenge( View view ) {
         CheckBox box = ( CheckBox ) view;
         if ( !box.isChecked() ) {
             Constants.Player playerType =  Constants.Player.valueOf( box.getTag().toString() );
             if ( playerType == Constants.Player.ATTACKER ) {
-                removeError( R.id.atkChallengeCost );
+                UiHelper.removeError( R.id.atkChallengeCost, this );
             } else if ( playerType == Constants.Player.DEFENDER ) {
-                removeError( R.id.defChallengeCost );
+                UiHelper.removeError( R.id.defChallengeCost, this );
             }
         }
     }
@@ -338,31 +263,19 @@ public class MainActivity extends AppCompatActivity {
             Constants.SetterType setter =  Constants.SetterType.valueOf( box.getTag().toString() );
             switch ( setter ) {
                 case ATK_ROLL:
-                    removeError( R.id.atkRollSetter );
+                    UiHelper.removeError( R.id.atkRollSetter, this );
                     break;
                 case ATK_CHALLENGE:
-                    removeError( R.id.atkChallengeSetter );
+                    UiHelper.removeError( R.id.atkChallengeSetter, this );
                     break;
                 case DEF_ROLL:
-                    removeError( R.id.defRollSetter );
+                    UiHelper.removeError( R.id.defRollSetter, this );
                     break;
                 case DEF_CHALLENGE:
-                    removeError( R.id.defChallengeSetter );
+                    UiHelper.removeError( R.id.defChallengeSetter, this );
                     break;
             }
         }
-    }
-
-    private int getIntInputValue( int id ) {
-        EditText box = findViewById(id);
-        String input = box.getText().toString();
-        int value;
-        if ( TextUtils.isEmpty( input ) ) {
-            value = 0;
-        } else {
-            value = Integer.parseInt(input);
-        }
-        return value;
     }
 
     private void populateSpinner( int spinnerId, int optionListId ) {
@@ -371,11 +284,6 @@ public class MainActivity extends AppCompatActivity {
                 optionListId, android.R.layout.simple_spinner_item );
         adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
         spinner.setAdapter( adapter );
-    }
-
-    private void removeError( int boxId ) {
-        EditText box = findViewById( boxId );
-        box.setError( null );
     }
 
     private int getDamage( Constants.DamageTier tier, Constants.Player initiator ) {
@@ -390,23 +298,23 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case LOW:
                 if ( initiator == Constants.Player.ATTACKER ) {
-                    damage = getIntInputValue( R.id.atkLowDamage );
+                    damage = UiHelper.getIntInputValue( R.id.atkLowDamage, this );
                 } else {
-                    damage = getIntInputValue( R.id.defLowDamage );
+                    damage = UiHelper.getIntInputValue( R.id.defLowDamage, this );
                 }
                 break;
             case MED:
                 if ( initiator == Constants.Player.ATTACKER ) {
-                    damage = getIntInputValue( R.id.atkMedDamage );
+                    damage = UiHelper.getIntInputValue( R.id.atkMedDamage, this );
                 } else {
-                    damage = getIntInputValue( R.id.defMedDamage );
+                    damage = UiHelper.getIntInputValue( R.id.defMedDamage, this );
                 }
                 break;
             case HIGH:
                 if ( initiator == Constants.Player.ATTACKER ) {
-                    damage = getIntInputValue( R.id.atkHighDamage );
+                    damage = UiHelper.getIntInputValue( R.id.atkHighDamage, this );
                 } else {
-                    damage = getIntInputValue( R.id.defHighDamage );
+                    damage = UiHelper.getIntInputValue( R.id.defHighDamage, this );
                 }
                 break;
             default:
@@ -416,21 +324,4 @@ public class MainActivity extends AppCompatActivity {
         return damage;
     }
 
-    private class DefOptionSelectedListener implements AdapterView.OnItemSelectedListener {
-
-        public void onItemSelected( AdapterView<?> parent, View view, int pos, long id ) {
-            Spinner optionSpinner = findViewById( R.id.defOption );
-            Constants.DefOption option = Constants.DefOption.valueOf(
-                    optionSpinner.getSelectedItem().toString().toUpperCase() );
-            if ( option != Constants.DefOption.INTERCEPT ) {
-                for ( int viewId : Constants.interceptMandatoryFields ) {
-                    removeError( viewId );
-                }
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> arg0) {
-        }
-    }
 }
