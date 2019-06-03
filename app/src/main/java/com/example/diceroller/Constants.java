@@ -72,4 +72,6 @@ public final class Constants {
     public static final int DODGE_MED = 10;
     public static final int DODGE_HIGH = 15;
 
+    public static final int MARGIN = 16;
+
 }

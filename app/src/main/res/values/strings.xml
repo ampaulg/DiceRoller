@@ -36,6 +36,8 @@
     <string name="atk_challenge_setter">Set atk challenge</string>
     <string name="def_roll_setter">Set def roll</string>
     <string name="def_challenge_setter">Set def challenge</string>
+    <string name="challenge_cost_label_tag">COST_LABEL</string>
+    <string name="challenge_cost_field_tag">COST_FIELD</string>
     <string-array name="dice_count_options">
         <item>1</item>
         <item>2</item>

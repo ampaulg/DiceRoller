@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class DefOptionSelectedListener implements AdapterView.OnItemSelectedListener {
 
-    private AppCompatActivity activity;
+    private final AppCompatActivity activity;
 
     DefOptionSelectedListener( AppCompatActivity activity ) {
         this.activity = activity;

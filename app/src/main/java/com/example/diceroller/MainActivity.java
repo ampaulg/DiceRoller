@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         defOptionSpinner.setOnItemSelectedListener( new DefOptionSelectedListener( this ) );
     }
 
+
     public void calculate( View view ) {
         if ( !UiHelper.checkValidInputs( this ) ) {
             return;
@@ -247,13 +248,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void toggleChallenge( View view ) {
         CheckBox box = ( CheckBox ) view;
-        if ( !box.isChecked() ) {
-            Constants.Player playerType =  Constants.Player.valueOf( box.getTag().toString() );
-            if ( playerType == Constants.Player.ATTACKER ) {
-                UiHelper.removeError( R.id.atkChallengeCost, this );
-            } else if ( playerType == Constants.Player.DEFENDER ) {
-                UiHelper.removeError( R.id.defChallengeCost, this );
-            }
+        Constants.Player playerType =  Constants.Player.valueOf( box.getTag().toString() );
+
+        if ( box.isChecked() ) {
+            // Needs fixing: gotta do this or else a keyboard doesn't appear for the new cost
+            // if there's already an EditText selected while toggling
+            UiHelper.hideKeyboard( this );
+            FormBuilder.addChallengeCost( playerType, this );
+        } else {
+            FormBuilder.removeChallengeCost( playerType, this );
         }
     }
 
@@ -323,5 +326,4 @@ public class MainActivity extends AppCompatActivity {
 
         return damage;
     }
-
 }

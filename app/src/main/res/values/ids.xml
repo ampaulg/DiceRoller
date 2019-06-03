@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="atkChallengeCostGroup" type="id"/>
+    <item name="atkChallengeCostLabel" type="id"/>
+    <item name="atkChallengeCost" type="id"/>
+    <item name="defChallengeCostGroup" type="id"/>
+    <item name="defChallengeCostLabel" type="id"/>
+    <item name="defChallengeCost" type="id"/>
+</resources>
