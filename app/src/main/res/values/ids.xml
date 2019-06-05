@@ -1,9 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item name="atkDiceGroup" type="id"/>
+    <item name="defDiceGroup" type="id"/>
+    <item name="atkDiceCountGroup" type="id"/>
+    <item name="atkDiceCountLabel" type="id"/>
+    <item name="atkDiceCount" type="id"/>
+    <item name="atkDiceType" type="id"/>
+    <item name="defDiceCountGroup" type="id"/>
+    <item name="defDiceCountLabel" type="id"/>
+    <item name="defDiceCount" type="id"/>
+    <item name="defDiceType" type="id"/>
+    <item name="atkChallengeGroup" type="id"/>
+    <item name="atkChallengeToggle" type="id"/>
     <item name="atkChallengeCostGroup" type="id"/>
     <item name="atkChallengeCostLabel" type="id"/>
     <item name="atkChallengeCost" type="id"/>
+    <item name="defChallengeGroup" type="id"/>
+    <item name="defChallengeToggle" type="id"/>
     <item name="defChallengeCostGroup" type="id"/>
     <item name="defChallengeCostLabel" type="id"/>
     <item name="defChallengeCost" type="id"/>
+    <item name="atkBonusGroup" type="id"/>
+    <item name="atkBonusLabel" type="id"/>
+    <item name="atkBonusValue" type="id"/>
+    <item name="defBonusGroup" type="id"/>
+    <item name="defBonusLabel" type="id"/>
+    <item name="defBonusValue" type="id"/>
 </resources>

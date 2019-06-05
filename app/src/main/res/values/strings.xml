@@ -38,6 +38,14 @@
     <string name="def_challenge_setter">Set def challenge</string>
     <string name="challenge_cost_label_tag">COST_LABEL</string>
     <string name="challenge_cost_field_tag">COST_FIELD</string>
+    <string name="dice_label_tag">DICE_LABEL</string>
+    <string name="dice_count_tag">DICE_COUNT</string>
+    <string name="dice_type_tag">DICE_TYPE</string>
+    <string name="bonus_label_tag">BONUS_LABEL</string>
+    <string name="bonus_value_tag">BONUS_VALUE</string>
+    <string name="challenge_toggle_tag">TOGGLE</string>
+    <string name="attacker_tag">ATTACKER</string>
+    <string name="defender_tag">DEFENDER</string>
     <string-array name="dice_count_options">
         <item>1</item>
         <item>2</item>

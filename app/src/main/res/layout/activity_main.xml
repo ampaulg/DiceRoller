@@ -17,35 +17,6 @@
         android:focusableInTouchMode="true"
         tools:context=".MainActivity" >
 
-        <Spinner
-            android:id="@+id/atkDiceCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/atkDiceLabel"
-            app:layout_constraintStart_toEndOf="@+id/atkDiceLabel"
-            app:layout_constraintTop_toTopOf="@+id/atkDiceLabel" />
-
-        <TextView
-            android:id="@+id/atkDiceLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="19dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/dice_question"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/atkSectionLabel" />
-
-        <TextView
-            android:id="@+id/atkDiceType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="@string/dice_d6"
-            app:layout_constraintBottom_toBottomOf="@+id/atkDiceCount"
-            app:layout_constraintStart_toEndOf="@+id/atkDiceCount"
-            app:layout_constraintTop_toTopOf="@+id/atkDiceCount" />
-
         <Button
             android:id="@+id/rollButton"
             android:layout_width="wrap_content"
@@ -66,19 +37,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/atkBaseRollResultLabel"
             app:layout_constraintStart_toEndOf="@+id/atkBaseRollResultLabel"
             app:layout_constraintTop_toTopOf="@+id/atkBaseRollResultLabel" />
-
-        <CheckBox
-            android:id="@+id/atkChallengeToggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:onClick="toggleChallenge"
-            android:tag="ATTACKER"
-            android:text="@string/add_d20"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/atkBonusLabel" />
-
         <TextView
             android:id="@+id/atkChallengeRollResult"
             android:layout_width="wrap_content"
@@ -101,37 +59,14 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/atkBonusLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:height="19dp"
-            android:text="@string/bonus"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/atkDiceLabel" />
-
-        <EditText
-            android:id="@+id/atkBonusAmount"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:ems="10"
-            android:inputType="numberSigned"
-            android:maxLength="3"
-            app:layout_constraintBottom_toBottomOf="@+id/atkBonusLabel"
-            app:layout_constraintStart_toEndOf="@+id/atkBonusLabel"
-            app:layout_constraintTop_toTopOf="@+id/atkBonusLabel" />
-
-        <TextView
             android:id="@+id/atkDamageTierLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="16dp"
             android:text="@string/damage_tiers"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/atkChallengeToggle" />
+            app:layout_constraintTop_toBottomOf="@+id/atkSectionLabel" />
 
         <EditText
             android:id="@+id/atkLowDamage"
@@ -216,10 +151,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="16dp"
             android:text="@string/damage_tiers"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/defChallengeToggle" />
+            app:layout_constraintTop_toBottomOf="@+id/defOptionSpinnerLabel" />
 
         <EditText
             android:id="@+id/defLowDamage"
@@ -631,69 +566,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/defOptionSpinnerLabel"
             app:layout_constraintTop_toTopOf="@+id/defOptionSpinnerLabel" />
-
-        <TextView
-            android:id="@+id/defDiceLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/dice_question"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/defOptionSpinnerLabel" />
-
-        <CheckBox
-            android:id="@+id/defChallengeToggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:onClick="toggleChallenge"
-            android:tag="DEFENDER"
-            android:text="@string/add_d20"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/defBonusLabel" />
-
-        <TextView
-            android:id="@+id/defBonusLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/bonus"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/defDiceLabel" />
-
-        <Spinner
-            android:id="@+id/defDiceCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/defDiceLabel"
-            app:layout_constraintStart_toEndOf="@+id/defDiceLabel"
-            app:layout_constraintTop_toTopOf="@+id/defDiceLabel" />
-
-        <TextView
-            android:id="@+id/defDiceType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="@string/dice_d6"
-            app:layout_constraintBottom_toBottomOf="@+id/defDiceCount"
-            app:layout_constraintStart_toEndOf="@+id/defDiceCount"
-            app:layout_constraintTop_toTopOf="@+id/defDiceCount" />
-
-        <EditText
-            android:id="@+id/defBonusAmount"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:ems="10"
-            android:inputType="number"
-            android:maxLength="3"
-            app:layout_constraintBottom_toBottomOf="@+id/defBonusLabel"
-            app:layout_constraintStart_toEndOf="@+id/defBonusLabel"
-            app:layout_constraintTop_toTopOf="@+id/defBonusLabel" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

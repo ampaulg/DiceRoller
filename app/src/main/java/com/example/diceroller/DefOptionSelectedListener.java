@@ -4,13 +4,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
-import androidx.appcompat.app.AppCompatActivity;
+class DefOptionSelectedListener implements AdapterView.OnItemSelectedListener {
 
-public class DefOptionSelectedListener implements AdapterView.OnItemSelectedListener {
+    private final MainActivity activity;
 
-    private final AppCompatActivity activity;
-
-    DefOptionSelectedListener( AppCompatActivity activity ) {
+    DefOptionSelectedListener( MainActivity activity ) {
         this.activity = activity;
     }
 
@@ -26,6 +24,6 @@ public class DefOptionSelectedListener implements AdapterView.OnItemSelectedList
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> arg0) {
+    public void onNothingSelected( AdapterView<?> arg0 ) {
     }
 }

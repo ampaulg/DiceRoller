@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -13,16 +12,39 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+    DiceGroup atkDiceGroup;
+    DiceGroup defDiceGroup;
+
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
 
-        populateSpinner( R.id.atkDiceCount, R.array.dice_count_options );
-        populateSpinner( R.id.defDiceCount, R.array.dice_count_options );
-        populateSpinner( R.id.defOption, R.array.def_options );
+        FormBuilder.populateSpinner( findViewById( R.id.constraintLayout ), R.id.defOption, R.array.def_options, this );
         Spinner defOptionSpinner = findViewById( R.id.defOption );
         defOptionSpinner.setOnItemSelectedListener( new DefOptionSelectedListener( this ) );
+        /*
+        FormBuilder.addDiceCount( Constants.Player.ATTACKER, this );
+        FormBuilder.addBonusGroup( Constants.Player.ATTACKER, this );
+        FormBuilder.addChallengeToggle( Constants.Player.ATTACKER, this );
+        */
+        /*
+        FormBuilder.addDiceCount( Constants.Player.DEFENDER, this );
+        FormBuilder.addBonusGroup( Constants.Player.DEFENDER, this );
+        FormBuilder.addChallengeToggle( Constants.Player.DEFENDER, this );
+        */
+
+        atkDiceGroup = new DiceGroup( Constants.Player.ATTACKER, this );
+        defDiceGroup = new DiceGroup( Constants.Player.DEFENDER, this );
+
+        FormBuilder.insertBetween(
+                findViewById( R.id.atkSectionLabel),
+                findViewById( R.id.atkDamageTierLabel ),
+                atkDiceGroup, this );
+        FormBuilder.insertBetween(
+                findViewById( R.id.defOptionSpinnerLabel ),
+                findViewById( R.id.defDamageTierLabel ),
+                defDiceGroup, this );
     }
 
 
@@ -111,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         if ( player == Constants.Player.ATTACKER ) {
             countBox = findViewById( R.id.atkDiceCount );
             challengeBox = findViewById( R.id.atkChallengeToggle );
-            bonus = UiHelper.getIntInputValue( R.id.atkBonusAmount, this );
+            bonus = UiHelper.getIntInputValue( R.id.atkBonusValue, this );
             baseResultViewId = R.id.atkBaseRollResult;
             challengeResultViewId = R.id.atkChallengeRollResult;
             rollSetterCheckbox = findViewById( R.id.atkRollSetterCheckbox );
@@ -119,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             countBox = findViewById( R.id.defDiceCount );
             challengeBox = findViewById( R.id.defChallengeToggle );
-            bonus = UiHelper.getIntInputValue( R.id.defBonusAmount, this );
+            bonus = UiHelper.getIntInputValue( R.id.defBonusValue, this );
             baseResultViewId = R.id.defBaseRollResult;
             challengeResultViewId = R.id.defChallengeRollResult;
             rollSetterCheckbox = findViewById( R.id.defRollSetterCheckbox );
@@ -279,14 +301,6 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }
-    }
-
-    private void populateSpinner( int spinnerId, int optionListId ) {
-        Spinner spinner = findViewById( spinnerId );
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource( this,
-                optionListId, android.R.layout.simple_spinner_item );
-        adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
-        spinner.setAdapter( adapter );
     }
 
     private int getDamage( Constants.DamageTier tier, Constants.Player initiator ) {

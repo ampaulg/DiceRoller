@@ -12,24 +12,24 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
-public final class UiHelper {
+final class UiHelper {
 
-    public static void writeNumber( int viewId, int outputNumber, Activity activity ) {
+    static void writeNumber( int viewId, int outputNumber, Activity activity ) {
         TextView outputView = activity.findViewById( viewId );
         outputView.setText( String.format( Locale.CANADA, "%d", outputNumber ) );
     }
 
-    public static void writeString( int viewId, int outputStringId, Activity activity ) {
+    static void writeString( int viewId, int outputStringId, Activity activity ) {
         TextView outputView = activity.findViewById( viewId );
         outputView.setText( activity.getText( outputStringId ) );
     }
 
-    public static void removeError( int boxId, Activity activity ) {
+    static void removeError( int boxId, Activity activity ) {
         EditText box = activity.findViewById( boxId );
         box.setError( null );
     }
 
-    public static void setDefOptionLabel( Constants.DefOption option, Activity activity ) {
+    static void setDefOptionLabel( Constants.DefOption option, Activity activity ) {
         int defOptionLabelViewId = R.id.defOptionChoiceLabel;
         switch ( option ) {
             case NONE:
@@ -51,14 +51,14 @@ public final class UiHelper {
         EditText box = activity.findViewById( boxId );
         String boxInput = box.getText().toString();
         if ( TextUtils.isEmpty( boxInput ) ) {
-
             box.setError( activity.getString( errorId ) );
             return true;
         }
+
         return false;
     }
 
-    public static boolean checkValidInputs( Activity activity ) {
+    static boolean checkValidInputs( Activity activity ) {
         boolean errorFound = false;
 
         for ( int viewId : Constants.mandatoryFields ) {
@@ -86,11 +86,10 @@ public final class UiHelper {
                 }
             }
         }
-
         return !errorFound;
     }
 
-    public static int getIntInputValue( int id, Activity activity ) {
+    static int getIntInputValue( int id, Activity activity ) {
         EditText box = activity.findViewById( id );
         String input = box.getText().toString();
         int value;
@@ -103,14 +102,14 @@ public final class UiHelper {
     }
 
     // Bugged, does not work when the screen has been scrolled to not be at the start
-    public static void clearFocus( Activity activity ) {
+    static void clearFocus( Activity activity ) {
         activity.findViewById( R.id.constraintLayout ).requestFocus();
         hideKeyboard( activity );
     }
 
     // Code from here
     // https://stackoverflow.com/a/17789187
-    public static void hideKeyboard( Activity activity ) {
+    static void hideKeyboard( Activity activity ) {
         InputMethodManager imm =
                 ( InputMethodManager ) activity.getSystemService( Activity.INPUT_METHOD_SERVICE );
         View view = activity.getCurrentFocus();
@@ -121,7 +120,7 @@ public final class UiHelper {
         view.clearFocus();
     }
 
-    public static  void openKeyboard( Activity activity ) {
+    static void openKeyboard( Activity activity ) {
         // Code from here
         // https://stackoverflow.com/a/8078341
         InputMethodManager imm =

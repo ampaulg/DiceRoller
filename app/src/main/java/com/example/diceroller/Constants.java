@@ -1,22 +1,22 @@
 package com.example.diceroller;
 
-public final class Constants {
+final class Constants {
 
     private Constants() {}
 
-    public enum Player {
+    enum Player {
         ATTACKER,
         DEFENDER
     }
 
-    public enum DefOption {
+    enum DefOption {
         NONE,
         DODGE,
         DEFLECT,
         INTERCEPT
     }
 
-    public enum DamageTier {
+    enum DamageTier {
         NONE,
         ONE,
         LOW,
@@ -24,16 +24,16 @@ public final class Constants {
         HIGH
     }
 
-    public enum SetterType {
+    enum SetterType {
         ATK_ROLL,
         ATK_CHALLENGE,
         DEF_ROLL,
         DEF_CHALLENGE
     }
 
-    public static final double DEFLECT_SCALE = 10.0;
+    static final double DEFLECT_SCALE = 10.0;
 
-    public static final int[] mandatoryFields = {
+    static final int[] mandatoryFields = {
             R.id.atkLowDamage,
             R.id.atkMedDamage,
             R.id.atkHighDamage,
@@ -42,7 +42,7 @@ public final class Constants {
             R.id.defArmourHigh
     };
 
-    public static final int[] interceptMandatoryFields = {
+    static final int[] interceptMandatoryFields = {
             R.id.defLowDamage,
             R.id.defMedDamage,
             R.id.defHighDamage,
@@ -53,7 +53,7 @@ public final class Constants {
 
     // This isn't a pretty solution but will be replaced by something that uses objects when making
     // the dynamic form
-    public static final int[][] checkBoxValidatorData = {
+    static final int[][] checkBoxValidatorData = {
             // checkbox id, input field id, error message id
             { R.id.atkChallengeToggle, R.id.atkChallengeCost, R.string.challenge_required_field },
             { R.id.defChallengeToggle, R.id.defChallengeCost, R.string.challenge_required_field },
@@ -62,16 +62,17 @@ public final class Constants {
             { R.id.defRollSetterCheckbox, R.id.defRollSetter, R.string.setter_required_field },
             { R.id.defChallengeSetterCheckbox, R.id.defChallengeSetter, R.string.setter_required_field },
     };
-    public static final int CHECKBOX = 0;
-    public static final int FIELD = 1;
-    public static final int ERROR = 2;
+    static final int CHECKBOX = 0;
+    static final int FIELD = 1;
+    static final int ERROR = 2;
 
-    public static final int PASSIVE_DAMAGE = 1;
+    static final int PASSIVE_DAMAGE = 1;
 
-    public static final int DODGE_LOW = 5;
-    public static final int DODGE_MED = 10;
-    public static final int DODGE_HIGH = 15;
+    static final int DODGE_LOW = 5;
+    static final int DODGE_MED = 10;
+    static final int DODGE_HIGH = 15;
 
-    public static final int MARGIN = 16;
+    //static final int MARGIN = 16;
+    static final int MARGIN = 0;
 
 }
