@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/damageGroup"
+    android:gravity="center_vertical" >
+    <TextView
+        android:id="@+id/damageLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/damage_tiers"
+        android:tag="@string/damage_label_tag" />
+    <EditText
+        android:id="@+id/lowDamage"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="2"
+        android:tag="@string/damage_low_tag" />
+    <EditText
+        android:id="@+id/medDamage"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="2"
+        android:tag="@string/damage_med_tag" />
+    <EditText
+        android:id="@+id/highDamage"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="2"
+        android:tag="@string/damage_high_tag" />
+
+</LinearLayout>

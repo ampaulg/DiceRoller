@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/topLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <LinearLayout
+        android:id="@+id/formHolder"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/atkSectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/attacker_section_label"
+            android:textSize="20sp"/>
+
+        <include android:id="@+id/atkDiceGroup"
+            layout="@layout/dice"/>
+        <include android:id="@+id/atkBonusGroup"
+            layout="@layout/bonus_group"/>
+        <include android:id="@+id/atkChallengeGroup"
+            layout="@layout/challenge_toggle"/>
+        <include android:id="@+id/atkDamageGroup"
+            layout="@layout/damage_group"/>
+        <include android:id="@+id/atkDefenseGroup"
+            layout="@layout/defense_group"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/defSectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/defender_section_label"
+            android:textSize="20sp"/>
+
+        <include android:id="@+id/defOptionGroup"
+            layout="@layout/def_option_selector"/>
+        <include android:id="@+id/defDiceGroup"
+            layout="@layout/dice"
+            android:visibility="gone"/>
+        <include android:id="@+id/defBonusGroup"
+            layout="@layout/bonus_group"
+            android:visibility="gone"/>
+        <include android:id="@+id/defChallengeGroup"
+            layout="@layout/challenge_toggle"
+            android:visibility="gone"/>
+        <include android:id="@+id/defDamageGroup"
+            layout="@layout/damage_group"
+            android:visibility="gone"/>
+        <include android:id="@+id/defDefenseGroup"
+            layout="@layout/defense_group"/>
+
+        <Button
+            android:id="@+id/rollButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="calculate"
+            android:text="@string/roll"/>
+
+        <include layout="@layout/debug_toggles"/>
+
+        <include layout="@layout/results"/>
+
+    </LinearLayout>
+</ScrollView>

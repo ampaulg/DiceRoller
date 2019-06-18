@@ -5,10 +5,10 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -22,11 +22,6 @@ final class UiHelper {
     static void writeString( int viewId, int outputStringId, Activity activity ) {
         TextView outputView = activity.findViewById( viewId );
         outputView.setText( activity.getText( outputStringId ) );
-    }
-
-    static void removeError( int boxId, Activity activity ) {
-        EditText box = activity.findViewById( boxId );
-        box.setError( null );
     }
 
     static void setDefOptionLabel( Constants.DefOption option, Activity activity ) {
@@ -47,8 +42,7 @@ final class UiHelper {
         }
     }
 
-    private static boolean checkInvalidBox( int boxId, int errorId, Activity activity ) {
-        EditText box = activity.findViewById( boxId );
+    private static boolean checkInvalidBox( EditText box, int errorId, Activity activity ) {
         String boxInput = box.getText().toString();
         if ( TextUtils.isEmpty( boxInput ) ) {
             box.setError( activity.getString( errorId ) );
@@ -58,39 +52,38 @@ final class UiHelper {
         return false;
     }
 
-    static boolean checkValidInputs( Activity activity ) {
-        boolean errorFound = false;
-
-        for ( int viewId : Constants.mandatoryFields ) {
-            if ( checkInvalidBox( viewId, R.string.required_field, activity ) ) {
-                errorFound = true;
-            }
-        }
-
-        for ( int[] checkbox : Constants.checkBoxValidatorData ) {
-            CheckBox box = activity.findViewById( checkbox[ Constants.CHECKBOX ] );
-            if ( box.isChecked() ) {
-                if ( checkInvalidBox( checkbox[ Constants.FIELD ], checkbox[ Constants.ERROR ], activity ) ) {
-                    errorFound = true;
-                }
-            }
-        }
-
-        Spinner defOptionSpinner = activity.findViewById( R.id.defOption );
-        Constants.DefOption option = Constants.DefOption.valueOf(
-                defOptionSpinner.getSelectedItem().toString().toUpperCase() );
-        if ( option == Constants.DefOption.INTERCEPT ) {
-            for ( int viewId : Constants.interceptMandatoryFields ) {
-                if ( checkInvalidBox( viewId, R.string.intercept_required_field, activity ) ) {
-                    errorFound = true;
-                }
-            }
-        }
-        return !errorFound;
+    static boolean checkInvalidInputs( Activity activity ) {
+        LinearLayout topLayout = activity.findViewById( R.id.formHolder );
+        return validateFields( topLayout, activity );
     }
 
-    static int getIntInputValue( int id, Activity activity ) {
-        EditText box = activity.findViewById( id );
+    private static boolean validateFields( LinearLayout layout, Activity activity ) {
+        boolean hasError = false;
+        for ( int i = 0; i < layout.getChildCount(); i++ ) {
+            View child = layout.getChildAt( i );
+            if ( child.getVisibility() != View.GONE ) {
+                if ( child instanceof EditText ) {
+                    if ( checkInvalidBox( ( EditText ) child, R.string.required_field, activity ) ) {
+                        hasError = true;
+                    }
+                } else if ( child instanceof LinearLayout ) {
+                    if ( validateFields( ( LinearLayout ) child, activity ) ) {
+                        hasError = true;
+                    }
+                }
+            }
+        }
+        return hasError;
+    }
+
+    static void showMessage( int messageId, Activity activity ) {
+        Toast toast = Toast.makeText( activity, messageId, Toast.LENGTH_SHORT );
+        toast.show();
+    }
+
+    static int getIntInputValue( int parentId, int fieldId, Activity activity ) {
+        View parent = activity.findViewById( parentId );
+        EditText box = parent.findViewById( fieldId );
         String input = box.getText().toString();
         int value;
         if ( TextUtils.isEmpty( input ) ) {
@@ -101,10 +94,8 @@ final class UiHelper {
         return value;
     }
 
-    // Bugged, does not work when the screen has been scrolled to not be at the start
-    static void clearFocus( Activity activity ) {
-        activity.findViewById( R.id.constraintLayout ).requestFocus();
-        hideKeyboard( activity );
+    static <T extends View> T findNestedViewById( int parentId, int viewId, Activity activity ) {
+        return activity.findViewById( parentId ).findViewById( viewId );
     }
 
     // Code from here
@@ -127,5 +118,4 @@ final class UiHelper {
                 ( InputMethodManager ) activity.getSystemService( Context.INPUT_METHOD_SERVICE );
         imm.toggleSoftInput( InputMethodManager.SHOW_FORCED,0 );
     }
-
 }

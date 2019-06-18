@@ -16,11 +16,7 @@ class DefOptionSelectedListener implements AdapterView.OnItemSelectedListener {
         Spinner optionSpinner = activity.findViewById( R.id.defOption );
         Constants.DefOption option = Constants.DefOption.valueOf(
                 optionSpinner.getSelectedItem().toString().toUpperCase() );
-        if ( option != Constants.DefOption.INTERCEPT ) {
-            for ( int viewId : Constants.interceptMandatoryFields ) {
-                UiHelper.removeError( viewId, activity );
-            }
-        }
+        FormBuilder.updateForm( option, activity );
     }
 
     @Override

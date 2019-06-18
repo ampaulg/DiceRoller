@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/bonusGroup"
     android:gravity="center_vertical" >
     <TextView
-        android:id="@+id/bonusLabel"
+        android:id="@+id/defOptionSpinnerLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="@string/bonus"
-        android:tag="@string/bonus_label_tag" />
-    <EditText
-        android:id="@+id/bonusValue"
-        android:layout_width="40dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/def_option_label" />
+    <Spinner
+        android:id="@+id/defOption"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:ems="10"
-        android:inputType="number"
-        android:maxLength="3"
-        android:tag="@string/bonus_value_tag" />
+        android:layout_marginBottom="8dp"/>
 </LinearLayout>

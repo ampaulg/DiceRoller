@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/defenseGroup"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/passiveDefGroup"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/passiveDefLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/passive_defense"
+            android:tag="@string/passive_def_label_tag" />
+        <EditText
+            android:id="@+id/passiveDefValue"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            android:tag="@string/passive_def_value_tag" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/armourGroup"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/armourLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/armour_range"
+            android:tag="@string/armour_label_tag" />
+        <EditText
+            android:id="@+id/armourLowValue"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            android:tag="@string/armour_low_tag" />
+        <EditText
+            android:id="@+id/armourHighValue"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="2"
+            android:tag="@string/armour_high_tag" />
+    </LinearLayout>
+</LinearLayout>
