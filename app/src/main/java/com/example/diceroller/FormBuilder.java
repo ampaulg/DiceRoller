@@ -1,307 +1,316 @@
 package com.example.diceroller;
 
 import android.app.Activity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
+import android.widget.TextView;
 
 final class FormBuilder {
 
-    static void addChallengeCost( Constants.Player player, Activity activity ) {
+    private final static int[] NONE_FORM = {
+            R.id.atkSectionLabel,
+            R.id.atkDiceGroup,
+            R.id.atkBonusGroup,
+            R.id.atkChallengeGroup,
+            R.id.atkDamageGroup,
+            R.id.defSectionLabel,
+            R.id.defOptionGroup,
+            R.id.defDefenseGroup,
+            R.id.rollButton,
+            R.id.debugGroup,
+            R.id.resultHolder
+    };
 
+    private final static int[] DODGE_OR_DEFLECT_FORM = {
+            R.id.atkSectionLabel,
+            R.id.atkDiceGroup,
+            R.id.atkBonusGroup,
+            R.id.atkChallengeGroup,
+            R.id.atkDamageGroup,
+            R.id.defDiceGroup,
+            R.id.defBonusGroup,
+            R.id.defChallengeGroup,
+            R.id.defSectionLabel,
+            R.id.defOptionGroup,
+            R.id.defDefenseGroup,
+            R.id.rollButton,
+            R.id.debugGroup,
+            R.id.resultHolder
+    };
+
+    private final static int[] INTERCEPT_FORM = {
+            R.id.atkSectionLabel,
+            R.id.atkDiceGroup,
+            R.id.atkBonusGroup,
+            R.id.atkChallengeGroup,
+            R.id.atkDamageGroup,
+            R.id.atkDefenseGroup,
+            R.id.defDiceGroup,
+            R.id.defBonusGroup,
+            R.id.defChallengeGroup,
+            R.id.defSectionLabel,
+            R.id.defOptionGroup,
+            R.id.defDefenseGroup,
+            R.id.rollButton,
+            R.id.debugGroup,
+            R.id.resultHolder
+    };
+
+    private final static int[] NONE_RESULTS = {
+            R.id.atkBaseRollResultGroup,
+            R.id.atkRollBonusResult,
+            R.id.atkDamageResult1Group
+    };
+
+    private final static int[] DODGE_OR_INTERCEPT_RESULTS = {
+            R.id.atkBaseRollResultGroup,
+            R.id.atkRollBonusResult,
+            R.id.defBaseRollResultGroup,
+            R.id.defRollBonusResult,
+            R.id.defChoiceGroup,
+            R.id.atkRollTotal2Group,
+            R.id.atkDamageResult1Group
+    };
+
+    private final static int[] DEFLECT_RESULTS = {
+            R.id.atkBaseRollResultGroup,
+            R.id.atkRollBonusResult,
+            R.id.defBaseRollResultGroup,
+            R.id.defRollBonusResult,
+            R.id.defChoiceGroup,
+            R.id.atkDamageResult1Group,
+            R.id.atkDamageResult2Group
+    };
+
+    private final static int[] ATK_CHALLENGE_RESULTS = {
+            R.id.atkChallengeResultGroup,
+            R.id.atkChallengeTotalResult
+    };
+
+    private final static int[] DEF_CHALLENGE_RESULTS = {
+            R.id.defChallengeResultGroup,
+            R.id.defChallengeTotalResult
+    };
+
+    static void updateForm( Constants.DefOption option, Activity activity ) {
+
+        int[] formMembers;
+        switch ( option ) {
+            case NONE:
+                formMembers = NONE_FORM;
+                break;
+            case DODGE:
+                formMembers = DODGE_OR_DEFLECT_FORM;
+                break;
+            case DEFLECT:
+                formMembers = DODGE_OR_DEFLECT_FORM;
+                break;
+            case INTERCEPT:
+                formMembers = INTERCEPT_FORM;
+                break;
+            default:
+                throw new IllegalArgumentException( "Invalid defensive option" );
+        }
+
+        LinearLayout formHolder = activity.findViewById( R.id.formHolder );
+
+        for ( int i = 0; i < formHolder.getChildCount(); i++ ) {
+            View v = formHolder.getChildAt( i );
+            if ( idInArray( v.getId(), formMembers ) ) {
+                v.setVisibility( View.VISIBLE );
+            } else {
+                v.setVisibility( View.GONE );
+            }
+        }
+    }
+
+    static void updateResults( Constants.DefOption option, Activity activity ) {
+
+        CheckBox atkChallengeBox = UiHelper.findNestedViewById( R.id.defChallengeGroup,
+                                                                R.id.challengeToggle,
+                                                                activity );
+        boolean atkChallenged = atkChallengeBox.isChecked();
+        CheckBox defChallengeBox = UiHelper.findNestedViewById( R.id.defChallengeGroup,
+                                                                R.id.challengeToggle,
+                                                                activity );
+        boolean defChallenged = defChallengeBox.isChecked();
+
+        int[] resultMembers;
+        switch ( option ) {
+            case NONE:
+                resultMembers = NONE_RESULTS;
+                break;
+            case DODGE:
+                resultMembers = DODGE_OR_INTERCEPT_RESULTS;
+                break;
+            case DEFLECT:
+                resultMembers = DEFLECT_RESULTS;
+                break;
+            case INTERCEPT:
+                resultMembers = DODGE_OR_INTERCEPT_RESULTS;
+                break;
+            default:
+                throw new IllegalArgumentException( "Invalid defensive option" );
+        }
+
+        LinearLayout resultsHolder = activity.findViewById( R.id.resultHolder );
+
+        for ( int i = 0; i < resultsHolder.getChildCount(); i++ ) {
+            View v = resultsHolder.getChildAt( i );
+            if ( idInArray( v.getId(), resultMembers ) ) {
+                v.setVisibility( View.VISIBLE );
+            } else {
+                if ((atkChallenged && (idInArray(v.getId(), ATK_CHALLENGE_RESULTS))) ||
+                        (defChallenged && (idInArray(v.getId(), DEF_CHALLENGE_RESULTS)))) {
+                    v.setVisibility(View.VISIBLE);
+                } else {
+                    v.setVisibility(View.GONE);
+                }
+            }
+        }
+    }
+
+    // Doing this manually so the API level doesn't need to be brought up
+    private static boolean idInArray ( int id, int[] array ) {
+        for ( int member : array ) {
+            if ( id == member ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static void toggleDebugMode( Activity activity ) {
+        for ( int id : Constants.DEBUG_SETTERS ) {
+            View setter = activity.findViewById( id );
+            if ( setter.getVisibility() == View.GONE ) {
+                    setter.setVisibility( View.VISIBLE );
+            } else {
+                setter.setVisibility( View.GONE );
+            }
+        }
+    }
+
+    static void toggleDiceDebug( Constants.Player player, Activity activity ) {
+
+        ViewGroup diceGroup;
         int groupId;
-        int labelId;
-        int costId;
-        ViewGroup challengeGroup;
+
         if ( player == Constants.Player.ATTACKER ) {
-            groupId = R.id.atkChallengeCostGroup;
-            labelId = R.id.atkChallengeCostLabel;
-            costId = R.id.atkChallengeCost;
+            groupId = R.id.atkDiceGroup;
+        } else {
+            groupId = R.id.defDiceGroup;
+        }
+
+        diceGroup = activity.findViewById( groupId );
+
+        if ( diceGroup.getVisibility() == View.GONE ) {
+            return;
+        } else {
+            for ( int i = 0; i < diceGroup.getChildCount(); i++ ) {
+                View child = diceGroup.getChildAt( i );
+                if ( !child.getTag().equals( diceGroup ) ) {
+                    if ( child.getVisibility() == View.GONE ) {
+                        child.setVisibility( View.VISIBLE );
+                    } else {
+                        child.setVisibility( View.GONE );
+                    }
+                }
+            }
+        }
+
+        UiHelper.hideKeyboard( activity );
+    }
+
+    static void showChallengeField( Constants.Player player, Constants.DiceMode mode, Activity activity ) {
+
+        ViewGroup challengeGroup;
+        String targetTag;
+
+        if ( mode == Constants.DiceMode.SET ) {
+            targetTag = ( String ) activity.getText( R.string.challenge_set_tag );
+        } else {
+            targetTag = ( String ) activity.getText( R.string.challenge_cost_tag );
+        }
+
+        if ( player == Constants.Player.ATTACKER ) {
             challengeGroup = activity.findViewById( R.id.atkChallengeGroup );
         } else {
-            groupId = R.id.defChallengeCostGroup;
-            labelId = R.id.defChallengeCostLabel;
-            costId = R.id.defChallengeCost;
             challengeGroup = activity.findViewById( R.id.defChallengeGroup);
         }
 
-        LayoutInflater inflater = activity.getLayoutInflater();
-        final View challengeCost = inflater.inflate( R.layout.challenge_roller,
-                ( ViewGroup) activity.findViewById( R.id.constraintLayout ), false );
-
-        challengeCost.setId( groupId );
-        challengeCost.findViewWithTag( activity.getText( R.string.challenge_cost_label_tag ) )
-                .setId( labelId );
-        challengeCost.findViewWithTag( activity.getText( R.string.challenge_cost_field_tag ) )
-                .setId( costId );
-
-        challengeGroup.addView( challengeCost );
+        for ( int i = 0; i < challengeGroup.getChildCount(); i++ ) {
+            View child = challengeGroup.getChildAt( i );
+            if ( child.getTag().equals( targetTag ) ) {
+                child.setVisibility( View.VISIBLE );
+                if ( child instanceof TextView ) {
+                    child.requestFocus();
+                }
+            }
+        }
 
         UiHelper.openKeyboard( activity );
-        activity.findViewById( costId ).requestFocus();
     }
 
-    static void removeChallengeCost( Constants.Player player, Activity activity ) {
+    static void hideChallengeField( Constants.Player player, Activity activity ) {
+
         ViewGroup challengeGroup;
-        int costGroup;
-        int costField;
+        String targetTag = ( String )activity.getText( R.string.challenge_toggle_tag );
 
         if ( player == Constants.Player.ATTACKER ) {
             challengeGroup = activity.findViewById( R.id.atkChallengeGroup );
-            costGroup = R.id.atkChallengeCostGroup;
-            costField = R.id.atkChallengeCost;
         } else {
-            challengeGroup = activity.findViewById( R.id.defChallengeGroup );
-            costGroup = R.id.defChallengeCostGroup;
-            costField = R.id.defChallengeCost;
+            challengeGroup = activity.findViewById( R.id.defChallengeGroup);
         }
 
-        if ( activity.getCurrentFocus() == activity.findViewById( costField ) ) {
-            UiHelper.clearFocus( activity );
+
+        for ( int i = 0; i < challengeGroup.getChildCount(); i++ ) {
+            View child = challengeGroup.getChildAt( i );
+            if ( !child.getTag().equals( targetTag ) ) {
+                child.setVisibility( View.GONE );
+            }
         }
-        challengeGroup.removeView( activity.findViewById( costGroup ) );
+
+        UiHelper.openKeyboard( activity );
     }
 
-    static void addDiceCount( Constants.Player player, Activity activity ) {
+    static void toggleChallengeDebug( Constants.Player player, Activity activity ) {
+
+        CheckBox challengeToggle;
+        ViewGroup challengeGroup;
         int groupId;
-        int questionId;
-        int spinnerId;
-        int diceTypeId;
-        View aboveView;
-        View belowView;
-
-        if ( player == Constants.Player.ATTACKER ) {
-            groupId = R.id.atkDiceCountGroup;
-            questionId = R.id.atkSectionLabel;
-            spinnerId= R.id.atkDiceCount;
-            diceTypeId = R.id.atkDiceType;
-            aboveView = activity.findViewById( R.id.atkSectionLabel );
-            belowView = activity.findViewById( R.id.atkDamageTierLabel );
-        } else {
-            groupId = R.id.defDiceCountGroup;
-            questionId = R.id.defSectionLabel;
-            spinnerId= R.id.defDiceCount;
-            diceTypeId = R.id.defDiceType;
-            aboveView = activity.findViewById( R.id.defOptionSpinnerLabel );
-            belowView = activity.findViewById( R.id.defDamageTierLabel );
-        }
-
-        LayoutInflater inflater = activity.getLayoutInflater();
-        final View diceCount = inflater.inflate( R.layout.dice_count,
-                ( ViewGroup ) activity.findViewById( R.id.constraintLayout ), false );
-
-        populateSpinner( diceCount, R.id.atkDiceCount, R.array.dice_count_options, activity );
-
-        diceCount.setId( groupId );
-        diceCount.findViewWithTag( activity.getText( R.string.dice_label_tag ) )
-                .setId( questionId );
-        diceCount.findViewWithTag( activity.getText( R.string.dice_count_tag) )
-                .setId( spinnerId );
-        diceCount.findViewWithTag( activity.getText( R.string.dice_type_tag) )
-                .setId( diceTypeId );
-
-        insertBetween( aboveView, belowView, diceCount, activity );
-    }
-
-    static void addDiceCount( LinearLayout parent, Constants.Player player, Activity activity ) {
-        int groupId;
-        int questionId;
-        int spinnerId;
-        int diceTypeId;
-
-        if ( player == Constants.Player.ATTACKER ) {
-            groupId = R.id.atkDiceCountGroup;
-            questionId = R.id.atkSectionLabel;
-            spinnerId= R.id.atkDiceCount;
-            diceTypeId = R.id.atkDiceType;
-        } else {
-            groupId = R.id.defDiceCountGroup;
-            questionId = R.id.defSectionLabel;
-            spinnerId= R.id.defDiceCount;
-            diceTypeId = R.id.defDiceType;
-        }
-
-        LayoutInflater inflater = activity.getLayoutInflater();
-        final View diceCount = inflater.inflate( R.layout.dice_count,
-                ( ViewGroup ) activity.findViewById( R.id.constraintLayout ), false );
-
-        populateSpinner( diceCount, R.id.atkDiceCount, R.array.dice_count_options, activity );
-
-        diceCount.setId( groupId );
-        diceCount.findViewWithTag( activity.getText( R.string.dice_label_tag ) )
-                .setId( questionId );
-        diceCount.findViewWithTag( activity.getText( R.string.dice_count_tag) )
-                .setId( spinnerId );
-        diceCount.findViewWithTag( activity.getText( R.string.dice_type_tag) )
-                .setId( diceTypeId );
-
-        parent.addView( diceCount, 0 );
-    }
-
-    static void addBonusGroup( Constants.Player player, Activity activity ) {
-        int groupId;
-        int labelId;
-        int valueId;
-        View aboveView;
-        View belowView;
-
-        if ( player == Constants.Player.ATTACKER ) {
-            groupId = R.id.atkBonusGroup;
-            labelId = R.id.atkBonusLabel;
-            valueId = R.id.atkBonusValue;
-            aboveView = activity.findViewById( R.id.atkDiceCountGroup );
-            belowView = activity.findViewById( R.id.atkDamageTierLabel );
-        } else {
-            groupId = R.id.defBonusGroup;
-            labelId = R.id.defBonusLabel;
-            valueId = R.id.defBonusValue;
-            aboveView = activity.findViewById( R.id.defDiceCountGroup );
-            belowView = activity.findViewById( R.id.defDamageTierLabel );
-        }
-
-        LayoutInflater inflater = activity.getLayoutInflater();
-        final View bonusGroup = inflater.inflate( R.layout.bonus_group,
-                ( ViewGroup ) activity.findViewById( R.id.constraintLayout ), false );
-
-        bonusGroup.setId( groupId );
-        bonusGroup.findViewWithTag( activity.getText( R.string.bonus_label_tag ) )
-                .setId( labelId );
-        bonusGroup.findViewWithTag( activity.getText( R.string.bonus_value_tag ) )
-                .setId( valueId );
-
-        insertBetween( aboveView, belowView, bonusGroup, activity );
-    }
-
-    static void addBonusGroup( LinearLayout parent, Constants.Player player, Activity activity ) {
-        int groupId;
-        int labelId;
-        int valueId;
-
-        if ( player == Constants.Player.ATTACKER ) {
-            groupId = R.id.atkBonusGroup;
-            labelId = R.id.atkBonusLabel;
-            valueId = R.id.atkBonusValue;
-        } else {
-            groupId = R.id.defBonusGroup;
-            labelId = R.id.defBonusLabel;
-            valueId = R.id.defBonusValue;
-        }
-
-        LayoutInflater inflater = activity.getLayoutInflater();
-        final View bonusGroup = inflater.inflate( R.layout.bonus_group,
-                ( ViewGroup ) activity.findViewById( R.id.constraintLayout ), false );
-
-        bonusGroup.setId( groupId );
-        bonusGroup.findViewWithTag( activity.getText( R.string.bonus_label_tag ) )
-                .setId( labelId );
-        bonusGroup.findViewWithTag( activity.getText( R.string.bonus_value_tag ) )
-                .setId( valueId );
-
-        parent.addView( bonusGroup );
-    }
-
-    static void addChallengeToggle( Constants.Player player, Activity activity ) {
-        int groupId;
-        int toggleId;
-        View aboveView;
-        View belowView;
-        int newTag;
 
         if ( player == Constants.Player.ATTACKER ) {
             groupId = R.id.atkChallengeGroup;
-            toggleId = R.id.atkChallengeToggle;
-            aboveView = activity.findViewById( R.id.atkBonusGroup );
-            belowView = activity.findViewById( R.id.atkDamageTierLabel );
-            newTag = R.string.attacker_tag;
         } else {
             groupId = R.id.defChallengeGroup;
-            toggleId = R.id.defChallengeToggle;
-            aboveView = activity.findViewById( R.id.defBonusGroup );
-            belowView = activity.findViewById( R.id.defDamageTierLabel );
-            newTag = R.string.defender_tag;
         }
 
-        LayoutInflater inflater = activity.getLayoutInflater();
-        final View challengeGroup = inflater.inflate( R.layout.challenge_toggle,
-                ( ViewGroup ) activity.findViewById( R.id.constraintLayout ), false );
+        challengeGroup = activity.findViewById( groupId );
+        challengeToggle = UiHelper.findNestedViewById( groupId, R.id.challengeToggle, activity );
 
-        challengeGroup.setId( groupId );
+        String checkboxTag = ( String )activity.getText( R.string.challenge_toggle_tag );
 
-        View checkbox = challengeGroup.findViewWithTag( activity.getText( R.string.challenge_toggle_tag ) );
-        checkbox.setId( toggleId );
-        checkbox.setTag( activity.getText( newTag ) );
-
-        insertBetween( aboveView, belowView, challengeGroup, activity );
-    }
-
-    static void addChallengeToggle( LinearLayout parent, Constants.Player player, Activity activity ) {
-        int groupId;
-        int toggleId;
-        int newTag;
-
-        if ( player == Constants.Player.ATTACKER ) {
-            groupId = R.id.atkChallengeGroup;
-            toggleId = R.id.atkChallengeToggle;
-            newTag = R.string.attacker_tag;
-        } else {
-            groupId = R.id.defChallengeGroup;
-            toggleId = R.id.defChallengeToggle;
-            newTag = R.string.defender_tag;
+        if ( !challengeToggle.isChecked() ) {
+            return;
         }
 
-        LayoutInflater inflater = activity.getLayoutInflater();
-        final View challengeGroup = inflater.inflate( R.layout.challenge_toggle,
-                ( ViewGroup ) activity.findViewById( R.id.constraintLayout ), false );
+        for ( int i = 0; i < challengeGroup.getChildCount(); i++ ) {
+            View child = challengeGroup.getChildAt( i );
+            if ( !child.getTag().equals( checkboxTag ) ) {
+                if ( child.getVisibility() == View.GONE ) {
+                    child.setVisibility( View.VISIBLE );
+                } else {
+                    child.setVisibility( View.GONE );
+                }
+            }
+        }
 
-        challengeGroup.setId( groupId );
-
-        View checkbox = challengeGroup.findViewWithTag( activity.getText( R.string.challenge_toggle_tag ) );
-        checkbox.setId( toggleId );
-        checkbox.setTag( activity.getText( newTag ) );
-
-        parent.addView( challengeGroup, 2 );
-    }
-
-    static void insertBetween( View top, View bottom, View newView, Activity activity ) {
-        ConstraintLayout layout = activity.findViewById( R.id.constraintLayout );
-        layout.addView( newView );
-
-        ConstraintSet constraintSet = new ConstraintSet();
-        constraintSet.clone( layout );
-
-        constraintSet.connect( newView.getId(), ConstraintSet.TOP,
-                top.getId(), ConstraintSet.BOTTOM,
-                Constants.MARGIN );
-
-        constraintSet.connect( bottom.getId(), ConstraintSet.TOP,
-                               newView.getId(), ConstraintSet.BOTTOM,
-                               Constants.MARGIN );
-        constraintSet.applyTo( layout );
-    }
-
-    private static void insertToRight( View leftView, View newView, Activity activity ) {
-
-        ConstraintLayout layout = activity.findViewById( R.id.constraintLayout );
-        layout.addView( newView );
-
-        ConstraintSet constraintSet = new ConstraintSet();
-        constraintSet.clone( layout );
-        constraintSet.connect( newView.getId(), ConstraintSet.TOP,
-                leftView.getId(), ConstraintSet.TOP,
-                Constants.MARGIN );
-        constraintSet.connect( newView.getId(), ConstraintSet.BOTTOM,
-                leftView.getId(), ConstraintSet.BOTTOM,
-                Constants.MARGIN );
-        constraintSet.connect( newView.getId(), ConstraintSet.LEFT,
-                leftView.getId(), ConstraintSet.RIGHT,
-                Constants.MARGIN );
-        constraintSet.applyTo( layout );
+        UiHelper.hideKeyboard( activity );
     }
 
     static void populateSpinner( View parentView, int spinnerId, int optionListId, Activity activity ) {

@@ -12,44 +12,24 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    DiceGroup atkDiceGroup;
-    DiceGroup defDiceGroup;
-
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_main );
+        setContentView( R.layout.dynamic_form );
 
-        FormBuilder.populateSpinner( findViewById( R.id.constraintLayout ), R.id.defOption, R.array.def_options, this );
+
+        FormBuilder.populateSpinner( findViewById( R.id.formHolder ), R.id.defOption, R.array.def_options, this );
         Spinner defOptionSpinner = findViewById( R.id.defOption );
         defOptionSpinner.setOnItemSelectedListener( new DefOptionSelectedListener( this ) );
-        /*
-        FormBuilder.addDiceCount( Constants.Player.ATTACKER, this );
-        FormBuilder.addBonusGroup( Constants.Player.ATTACKER, this );
-        FormBuilder.addChallengeToggle( Constants.Player.ATTACKER, this );
-        */
-        /*
-        FormBuilder.addDiceCount( Constants.Player.DEFENDER, this );
-        FormBuilder.addBonusGroup( Constants.Player.DEFENDER, this );
-        FormBuilder.addChallengeToggle( Constants.Player.DEFENDER, this );
-        */
 
-        atkDiceGroup = new DiceGroup( Constants.Player.ATTACKER, this );
-        defDiceGroup = new DiceGroup( Constants.Player.DEFENDER, this );
-
-        FormBuilder.insertBetween(
-                findViewById( R.id.atkSectionLabel),
-                findViewById( R.id.atkDamageTierLabel ),
-                atkDiceGroup, this );
-        FormBuilder.insertBetween(
-                findViewById( R.id.defOptionSpinnerLabel ),
-                findViewById( R.id.defDamageTierLabel ),
-                defDiceGroup, this );
+        FormBuilder.populateSpinner( findViewById( R.id.atkDiceGroup), R.id.diceCount, R.array.dice_count_options, this );
+        FormBuilder.populateSpinner( findViewById( R.id.defDiceGroup), R.id.diceCount, R.array.dice_count_options, this );
     }
 
-
     public void calculate( View view ) {
-        if ( !UiHelper.checkValidInputs( this ) ) {
+
+        if ( UiHelper.checkInvalidInputs( this ) ) {
+            UiHelper.showMessage( R.string.error_toast_msg, this );
             return;
         }
 
@@ -92,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
         }
         atkDamage2 = Math.max( atkDamage1 - deflectModifier, 0 );
         UiHelper.writeNumber( R.id.atkDamageResult2, atkDamage2, this );
+
+        FormBuilder.updateResults( defOption, this );
     }
 
     private int getDodgeResult( int defRoll ) {
@@ -125,38 +107,45 @@ public class MainActivity extends AppCompatActivity {
         int bonus;
 
         int baseResultViewId;
+        int bonusTotalViewId;
         int challengeResultViewId;
 
+        CheckBox enableDebugCheckbox = findViewById( R.id.debugModeToggle );
         CheckBox rollSetterCheckbox;
-        int rollSetterId;
+        int diceGroupId;
 
         if ( player == Constants.Player.ATTACKER ) {
-            countBox = findViewById( R.id.atkDiceCount );
-            challengeBox = findViewById( R.id.atkChallengeToggle );
-            bonus = UiHelper.getIntInputValue( R.id.atkBonusValue, this );
+            countBox = UiHelper.findNestedViewById( R.id.atkDiceGroup, R.id.diceCount, this );
+            challengeBox = UiHelper.findNestedViewById( R.id.atkChallengeGroup, R.id.challengeToggle, this );
+            bonus = UiHelper.getIntInputValue( R.id.atkBonusGroup, R.id.bonusValue, this );
             baseResultViewId = R.id.atkBaseRollResult;
-            challengeResultViewId = R.id.atkChallengeRollResult;
+            bonusTotalViewId = R.id.atkBonusTotal;
+            challengeResultViewId = R.id.atkChallengeResult;
             rollSetterCheckbox = findViewById( R.id.atkRollSetterCheckbox );
-            rollSetterId = R.id.atkRollSetter;
+            diceGroupId = R.id.atkDiceGroup;
         } else {
-            countBox = findViewById( R.id.defDiceCount );
-            challengeBox = findViewById( R.id.defChallengeToggle );
-            bonus = UiHelper.getIntInputValue( R.id.defBonusValue, this );
+            countBox = UiHelper.findNestedViewById( R.id.defDiceGroup, R.id.diceCount, this );
+            challengeBox = UiHelper.findNestedViewById( R.id.defChallengeGroup, R.id.challengeToggle, this );
+            bonus = UiHelper.getIntInputValue( R.id.defBonusGroup, R.id.bonusValue, this );
             baseResultViewId = R.id.defBaseRollResult;
-            challengeResultViewId = R.id.defChallengeRollResult;
+            bonusTotalViewId = R.id.defBonusTotal;
+            challengeResultViewId = R.id.defChallengeResult;
             rollSetterCheckbox = findViewById( R.id.defRollSetterCheckbox );
-            rollSetterId = R.id.defRollSetter;
+            diceGroupId = R.id.defDiceGroup;
         }
 
         int count = Integer.parseInt( countBox.getSelectedItem().toString() );
 
         int rollResult;
-        if ( rollSetterCheckbox.isChecked() ) {
-            rollResult = UiHelper.getIntInputValue( rollSetterId, this );
+        if ( enableDebugCheckbox.isChecked() && rollSetterCheckbox.isChecked() ) {
+            rollResult = UiHelper.getIntInputValue( diceGroupId, R.id.diceSetterValue, this );
         } else {
             rollResult = rollDice( count, 6 );
         }
         UiHelper.writeNumber( baseResultViewId, rollResult, this );
+
+        rollResult += bonus;
+        UiHelper.writeNumber( bonusTotalViewId, rollResult, this );
 
         if ( challengeBox.isChecked() ) {
             rollResult += challenge( player );
@@ -164,41 +153,43 @@ public class MainActivity extends AppCompatActivity {
             UiHelper.writeString( challengeResultViewId, R.string.no_roll, this );
         }
 
-        rollResult += bonus;
-
         return rollResult;
     }
 
     private int challenge( Constants.Player player ) {
         int challengeCost;
         int challengeResultViewId;
+        int challengeGroupId;
+        int setterBoxId;
 
+        CheckBox enableDebugCheckbox = findViewById( R.id.debugModeToggle );
         CheckBox challengeSetterCheckbox;
-        int challengeSetterId;
-
         if ( player == Constants.Player.ATTACKER ) {
-            challengeCost = UiHelper.getIntInputValue( R.id.atkChallengeCost, this );
-            challengeResultViewId = R.id.atkChallengeRollResult;
-            challengeSetterCheckbox = findViewById( R.id.atkChallengeSetterCheckbox );
-            challengeSetterId = R.id.atkChallengeSetter;
+            challengeGroupId = R.id.atkChallengeGroup;
+            challengeResultViewId = R.id.atkChallengeResult;
+            setterBoxId = R.id.atkChallengeSetterCheckbox;
         } else {
-            challengeCost = UiHelper.getIntInputValue( R.id.defChallengeCost, this );
-            challengeResultViewId = R.id.defChallengeRollResult;
-            challengeSetterCheckbox = findViewById( R.id.defChallengeSetterCheckbox );
-            challengeSetterId = R.id.defChallengeSetter;
-
+            challengeGroupId = R.id.defChallengeGroup;
+            challengeResultViewId = R.id.defChallengeResult;
+            setterBoxId = R.id.defChallengeSetterCheckbox;
         }
 
+        challengeCost = UiHelper.getIntInputValue( challengeGroupId, R.id.challengeCost, this );
+        challengeSetterCheckbox = findViewById( setterBoxId );
+
         int challengeRoll;
-        if ( challengeSetterCheckbox.isChecked() ) {
-            challengeRoll = UiHelper.getIntInputValue( challengeSetterId, this );
+        boolean challengeSet = ( enableDebugCheckbox.isChecked() &&
+                                 challengeSetterCheckbox.isChecked() );
+
+        if ( challengeSet ) {
+            challengeRoll = UiHelper.getIntInputValue( challengeGroupId, R.id.challengeSetterValue, this );
         } else {
             challengeRoll = rollDice( 1, 20 );
         }
 
         int result = 0;
 
-        if ( challengeCost > challengeRoll ) {
+        if ( ( challengeCost > challengeRoll ) || challengeSet ){
             result = challengeRoll;
             UiHelper.writeNumber( challengeResultViewId, challengeRoll, this );
         } else {
@@ -241,16 +232,16 @@ public class MainActivity extends AppCompatActivity {
         int passiveDef;
         int armourLow;
         int armourHigh;
+        int defGroupId;
 
         if ( target == Constants.Player.DEFENDER ) {
-            passiveDef = UiHelper.getIntInputValue( R.id.defPassiveDef, this );
-            armourLow = UiHelper.getIntInputValue( R.id.defArmourLow, this );
-            armourHigh = UiHelper.getIntInputValue( R.id.defArmourHigh, this );
+            defGroupId = R.id.defDefenseGroup;
         } else {
-            passiveDef = UiHelper.getIntInputValue( R.id.atkPassiveDef, this );
-            armourLow = UiHelper.getIntInputValue( R.id.atkArmourLow, this );
-            armourHigh = UiHelper.getIntInputValue( R.id.atkArmourHigh, this );
+            defGroupId = R.id.atkDefenseGroup;
         }
+        passiveDef = UiHelper.getIntInputValue( defGroupId, R.id.passiveDefValue, this );
+        armourLow = UiHelper.getIntInputValue( defGroupId, R.id.armourLowValue, this );
+        armourHigh = UiHelper.getIntInputValue( defGroupId, R.id.armourHighValue, this );
 
         Constants.DamageTier tier;
         if ( roll < passiveDef ) {
@@ -270,41 +261,66 @@ public class MainActivity extends AppCompatActivity {
 
     public void toggleChallenge( View view ) {
         CheckBox box = ( CheckBox ) view;
-        Constants.Player playerType =  Constants.Player.valueOf( box.getTag().toString() );
+        View parent = ( View ) view.getParent();
+        Constants.DiceMode mode;
+        CheckBox debugToggle;
+        Constants.Player player;
+
+        if ( parent.getId() == R.id.atkChallengeGroup ) {
+            player = Constants.Player.ATTACKER;
+            debugToggle = findViewById(R.id.atkChallengeSetterCheckbox );
+        } else {
+            player = Constants.Player.DEFENDER;
+            debugToggle = findViewById( R.id.defChallengeSetterCheckbox );
+        }
+
+        if ( debugToggle.isChecked() ) {
+            mode = Constants.DiceMode.SET;
+        } else {
+            mode = Constants.DiceMode.ROLL;
+        }
 
         if ( box.isChecked() ) {
             // Needs fixing: gotta do this or else a keyboard doesn't appear for the new cost
             // if there's already an EditText selected while toggling
             UiHelper.hideKeyboard( this );
-            FormBuilder.addChallengeCost( playerType, this );
+            FormBuilder.showChallengeField( player, mode, this );
         } else {
-            FormBuilder.removeChallengeCost( playerType, this );
+            FormBuilder.hideChallengeField( player, this );
         }
     }
 
     public void toggleSetter( View view ) {
         CheckBox box = ( CheckBox ) view;
-        if ( !box.isChecked() ) {
-            Constants.SetterType setter =  Constants.SetterType.valueOf( box.getTag().toString() );
-            switch ( setter ) {
-                case ATK_ROLL:
-                    UiHelper.removeError( R.id.atkRollSetter, this );
-                    break;
-                case ATK_CHALLENGE:
-                    UiHelper.removeError( R.id.atkChallengeSetter, this );
-                    break;
-                case DEF_ROLL:
-                    UiHelper.removeError( R.id.defRollSetter, this );
-                    break;
-                case DEF_CHALLENGE:
-                    UiHelper.removeError( R.id.defChallengeSetter, this );
-                    break;
-            }
+        Constants.SetterType setter =  Constants.SetterType.valueOf( box.getTag().toString() );
+        switch ( setter ) {
+            case DEBUG_TOGGLE:
+                FormBuilder.toggleDebugMode( this );
+                break;
+            case ATK_ROLL:
+                FormBuilder.toggleDiceDebug( Constants.Player.ATTACKER, this );
+                break;
+            case ATK_CHALLENGE:
+                FormBuilder.toggleChallengeDebug( Constants.Player.ATTACKER, this );
+                break;
+            case DEF_ROLL:
+                FormBuilder.toggleDiceDebug( Constants.Player.DEFENDER, this );
+                break;
+            case DEF_CHALLENGE:
+                FormBuilder.toggleChallengeDebug( Constants.Player.DEFENDER, this );
+                break;
         }
     }
 
     private int getDamage( Constants.DamageTier tier, Constants.Player initiator ) {
         int damage;
+        int damageGroupId;
+
+        if ( initiator == Constants.Player.ATTACKER ) {
+            damageGroupId = R.id.atkDamageGroup;
+        } else {
+            damageGroupId = R.id.defDamageGroup;
+        }
 
         switch ( tier ) {
             case NONE:
@@ -314,25 +330,13 @@ public class MainActivity extends AppCompatActivity {
                 damage = Constants.PASSIVE_DAMAGE;
                 break;
             case LOW:
-                if ( initiator == Constants.Player.ATTACKER ) {
-                    damage = UiHelper.getIntInputValue( R.id.atkLowDamage, this );
-                } else {
-                    damage = UiHelper.getIntInputValue( R.id.defLowDamage, this );
-                }
+                damage = UiHelper.getIntInputValue( damageGroupId, R.id.lowDamage, this );
                 break;
             case MED:
-                if ( initiator == Constants.Player.ATTACKER ) {
-                    damage = UiHelper.getIntInputValue( R.id.atkMedDamage, this );
-                } else {
-                    damage = UiHelper.getIntInputValue( R.id.defMedDamage, this );
-                }
+                damage = UiHelper.getIntInputValue( damageGroupId, R.id.medDamage, this );
                 break;
             case HIGH:
-                if ( initiator == Constants.Player.ATTACKER ) {
-                    damage = UiHelper.getIntInputValue( R.id.atkHighDamage, this );
-                } else {
-                    damage = UiHelper.getIntInputValue( R.id.defHighDamage, this );
-                }
+                damage = UiHelper.getIntInputValue( damageGroupId, R.id.highDamage, this );
                 break;
             default:
                 throw new IllegalArgumentException( "Invalid damage tier" );
