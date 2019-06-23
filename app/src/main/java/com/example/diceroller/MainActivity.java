@@ -157,10 +157,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private int challenge( Constants.Player player ) {
-        int challengeCost;
-        int challengeResultViewId;
-        int challengeGroupId;
-        int setterBoxId;
+            int challengeCost;
+            int challengeResultViewId;
+            int challengeGroupId;
+            int setterBoxId;
 
         CheckBox enableDebugCheckbox = findViewById( R.id.debugModeToggle );
         CheckBox challengeSetterCheckbox;

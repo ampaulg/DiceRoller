@@ -88,12 +88,12 @@ final class FormBuilder {
 
     private final static int[] ATK_CHALLENGE_RESULTS = {
             R.id.atkChallengeResultGroup,
-            R.id.atkChallengeTotalResult
+            R.id.atkChallengeTotalGroup
     };
 
     private final static int[] DEF_CHALLENGE_RESULTS = {
             R.id.defChallengeResultGroup,
-            R.id.defChallengeTotalResult
+            R.id.defChallengeTotalGroup
     };
 
     static void updateForm( Constants.DefOption option, Activity activity ) {
@@ -130,7 +130,7 @@ final class FormBuilder {
 
     static void updateResults( Constants.DefOption option, Activity activity ) {
 
-        CheckBox atkChallengeBox = UiHelper.findNestedViewById( R.id.defChallengeGroup,
+        CheckBox atkChallengeBox = UiHelper.findNestedViewById( R.id.atkChallengeGroup,
                                                                 R.id.challengeToggle,
                                                                 activity );
         boolean atkChallenged = atkChallengeBox.isChecked();
