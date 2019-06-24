@@ -13,9 +13,7 @@ final class FormBuilder {
 
     private final static int[] NONE_FORM = {
             R.id.atkSectionLabel,
-            R.id.atkDiceGroup,
-            R.id.atkBonusGroup,
-            R.id.atkChallengeGroup,
+            R.id.atkRollGroup,
             R.id.atkDamageGroup,
             R.id.defSectionLabel,
             R.id.defOptionGroup,
@@ -27,13 +25,9 @@ final class FormBuilder {
 
     private final static int[] DODGE_OR_DEFLECT_FORM = {
             R.id.atkSectionLabel,
-            R.id.atkDiceGroup,
-            R.id.atkBonusGroup,
-            R.id.atkChallengeGroup,
+            R.id.atkRollGroup,
             R.id.atkDamageGroup,
-            R.id.defDiceGroup,
-            R.id.defBonusGroup,
-            R.id.defChallengeGroup,
+            R.id.defRollGroup,
             R.id.defSectionLabel,
             R.id.defOptionGroup,
             R.id.defDefenseGroup,
@@ -44,15 +38,11 @@ final class FormBuilder {
 
     private final static int[] INTERCEPT_FORM = {
             R.id.atkSectionLabel,
-            R.id.atkDiceGroup,
-            R.id.atkBonusGroup,
-            R.id.atkChallengeGroup,
+            R.id.atkRollGroup,
             R.id.atkDamageGroup,
             R.id.atkDefenseGroup,
             R.id.defSectionLabel,
-            R.id.defDiceGroup,
-            R.id.defBonusGroup,
-            R.id.defChallengeGroup,
+            R.id.defRollGroup,
             R.id.defDamageGroup,
             R.id.defOptionGroup,
             R.id.defDefenseGroup,
@@ -131,11 +121,11 @@ final class FormBuilder {
 
     static void updateResults( Constants.DefOption option, Activity activity ) {
 
-        CheckBox atkChallengeBox = UiHelper.findNestedViewById( R.id.atkChallengeGroup,
+        CheckBox atkChallengeBox = UiHelper.findNestedViewById( R.id.atkRollGroup,
                                                                 R.id.challengeToggle,
                                                                 activity );
         boolean atkChallenged = atkChallengeBox.isChecked();
-        CheckBox defChallengeBox = UiHelper.findNestedViewById( R.id.defChallengeGroup,
+        CheckBox defChallengeBox = UiHelper.findNestedViewById( R.id.defRollGroup,
                                                                 R.id.challengeToggle,
                                                                 activity );
         boolean defChallenged = defChallengeBox.isChecked();
@@ -196,37 +186,6 @@ final class FormBuilder {
         }
     }
 
-    static void toggleDiceDebug( Constants.Player player, Activity activity ) {
-
-        ViewGroup diceGroup;
-        int groupId;
-
-        if ( player == Constants.Player.ATTACKER ) {
-            groupId = R.id.atkDiceGroup;
-        } else {
-            groupId = R.id.defDiceGroup;
-        }
-
-        diceGroup = activity.findViewById( groupId );
-
-        if ( diceGroup.getVisibility() == View.GONE ) {
-            return;
-        } else {
-            for ( int i = 0; i < diceGroup.getChildCount(); i++ ) {
-                View child = diceGroup.getChildAt( i );
-                if ( !child.getTag().equals( diceGroup ) ) {
-                    if ( child.getVisibility() == View.GONE ) {
-                        child.setVisibility( View.VISIBLE );
-                    } else {
-                        child.setVisibility( View.GONE );
-                    }
-                }
-            }
-        }
-
-        UiHelper.hideKeyboard( activity );
-    }
-
     static void showChallengeField( Constants.Player player, Constants.DiceMode mode, Activity activity ) {
 
         ViewGroup challengeGroup;
@@ -239,9 +198,13 @@ final class FormBuilder {
         }
 
         if ( player == Constants.Player.ATTACKER ) {
-            challengeGroup = activity.findViewById( R.id.atkChallengeGroup );
+            challengeGroup = UiHelper.findNestedViewById( R.id.atkRollGroup,
+                                                          R.id.challengeGroup,
+                                                          activity );
         } else {
-            challengeGroup = activity.findViewById( R.id.defChallengeGroup);
+            challengeGroup = UiHelper.findNestedViewById( R.id.defRollGroup,
+                                                          R.id.challengeGroup,
+                                                          activity );
         }
 
         for ( int i = 0; i < challengeGroup.getChildCount(); i++ ) {
@@ -261,12 +224,15 @@ final class FormBuilder {
 
         ViewGroup challengeGroup;
         String targetTag = ( String )activity.getText( R.string.challenge_toggle_tag );
+        ViewGroup parentGroup;
 
         if ( player == Constants.Player.ATTACKER ) {
-            challengeGroup = activity.findViewById( R.id.atkChallengeGroup );
+            parentGroup = activity.findViewById( R.id.atkRollGroup );
         } else {
-            challengeGroup = activity.findViewById( R.id.defChallengeGroup);
+            parentGroup = activity.findViewById( R.id.defRollGroup );
         }
+
+        challengeGroup = parentGroup.findViewById( R.id.challengeGroup );
 
 
         for ( int i = 0; i < challengeGroup.getChildCount(); i++ ) {
@@ -279,6 +245,37 @@ final class FormBuilder {
         UiHelper.openKeyboard( activity );
     }
 
+    static void toggleDiceDebug( Constants.Player player, Activity activity ) {
+
+        ViewGroup diceGroup;
+        int groupId;
+
+        if ( player == Constants.Player.ATTACKER ) {
+            groupId = R.id.atkRollGroup;
+        } else {
+            groupId = R.id.defRollGroup;
+        }
+
+        diceGroup = UiHelper.findNestedViewById( groupId, R.id.diceGroup, activity );
+
+        if ( diceGroup.getVisibility() == View.GONE ) {
+            return;
+        } else {
+            for ( int i = 0; i < diceGroup.getChildCount(); i++ ) {
+                View child = diceGroup.getChildAt( i );
+                if ( !child.getTag().equals( diceGroup ) ) {
+                    if ( child.getVisibility() == View.GONE ) {
+                        child.setVisibility( View.VISIBLE );
+                    } else {
+                        child.setVisibility( View.GONE );
+                    }
+                }
+            }
+        }
+
+        UiHelper.hideKeyboard( activity );
+    }
+
     static void toggleChallengeDebug( Constants.Player player, Activity activity ) {
 
         CheckBox challengeToggle;
@@ -286,12 +283,12 @@ final class FormBuilder {
         int groupId;
 
         if ( player == Constants.Player.ATTACKER ) {
-            groupId = R.id.atkChallengeGroup;
+            groupId = R.id.atkRollGroup;
         } else {
-            groupId = R.id.defChallengeGroup;
+            groupId = R.id.defRollGroup;
         }
 
-        challengeGroup = activity.findViewById( groupId );
+        challengeGroup = UiHelper.findNestedViewById( groupId, R.id.challengeGroup, activity );
         challengeToggle = UiHelper.findNestedViewById( groupId, R.id.challengeToggle, activity );
 
         String checkboxTag = ( String )activity.getText( R.string.challenge_toggle_tag );

@@ -2,7 +2,7 @@
 
 Created a dice roll calculator for an upcoming tabletop RPG.
 
-Handles attacks and challanges along with the various defensive options.
+Handles attacks and challenges along with the various defensive options.
 
 The form will dynamically update to show only the required fields, and the output lines will match the options chosen.
 

@@ -242,4 +242,11 @@
             android:layout_marginStart="16dp"
             android:text="@string/zero"/>
     </LinearLayout>
+    <TextView
+        android:id="@+id/doubleChallengeSuccessMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/double_challenge_success_message"
+        android:visibility="gone"/>
 </LinearLayout>

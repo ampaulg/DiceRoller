@@ -22,8 +22,8 @@ public class MainActivity extends AppCompatActivity {
         Spinner defOptionSpinner = findViewById( R.id.defOption );
         defOptionSpinner.setOnItemSelectedListener( new DefOptionSelectedListener( this ) );
 
-        FormBuilder.populateSpinner( findViewById( R.id.atkDiceGroup), R.id.diceCount, R.array.dice_count_options, this );
-        FormBuilder.populateSpinner( findViewById( R.id.defDiceGroup), R.id.diceCount, R.array.dice_count_options, this );
+        FormBuilder.populateSpinner( findViewById( R.id.atkRollGroup ), R.id.diceCount, R.array.dice_count_options, this );
+        FormBuilder.populateSpinner( findViewById( R.id.defRollGroup ), R.id.diceCount, R.array.dice_count_options, this );
     }
 
     public void calculate( View view ) {
@@ -115,23 +115,23 @@ public class MainActivity extends AppCompatActivity {
         int diceGroupId;
 
         if ( player == Constants.Player.ATTACKER ) {
-            countBox = UiHelper.findNestedViewById( R.id.atkDiceGroup, R.id.diceCount, this );
-            challengeBox = UiHelper.findNestedViewById( R.id.atkChallengeGroup, R.id.challengeToggle, this );
-            bonus = UiHelper.getIntInputValue( R.id.atkBonusGroup, R.id.bonusValue, this );
+            countBox = UiHelper.findNestedViewById( R.id.atkRollGroup, R.id.diceCount, this );
+            challengeBox = UiHelper.findNestedViewById( R.id.atkRollGroup, R.id.challengeToggle, this );
+            bonus = UiHelper.getIntInputValue( R.id.atkRollGroup, R.id.bonusValue, this );
             baseResultViewId = R.id.atkBaseRollResult;
             bonusTotalViewId = R.id.atkBonusTotal;
             challengeResultViewId = R.id.atkChallengeResult;
             rollSetterCheckbox = findViewById( R.id.atkRollSetterCheckbox );
-            diceGroupId = R.id.atkDiceGroup;
+            diceGroupId = R.id.atkRollGroup;
         } else {
-            countBox = UiHelper.findNestedViewById( R.id.defDiceGroup, R.id.diceCount, this );
-            challengeBox = UiHelper.findNestedViewById( R.id.defChallengeGroup, R.id.challengeToggle, this );
-            bonus = UiHelper.getIntInputValue( R.id.defBonusGroup, R.id.bonusValue, this );
+            countBox = UiHelper.findNestedViewById( R.id.defRollGroup, R.id.diceCount, this );
+            challengeBox = UiHelper.findNestedViewById( R.id.defRollGroup, R.id.challengeToggle, this );
+            bonus = UiHelper.getIntInputValue( R.id.defRollGroup, R.id.bonusValue, this );
             baseResultViewId = R.id.defBaseRollResult;
             bonusTotalViewId = R.id.defBonusTotal;
             challengeResultViewId = R.id.defChallengeResult;
             rollSetterCheckbox = findViewById( R.id.defRollSetterCheckbox );
-            diceGroupId = R.id.defDiceGroup;
+            diceGroupId = R.id.defRollGroup;
         }
 
         int count = Integer.parseInt( countBox.getSelectedItem().toString() );
@@ -159,22 +159,22 @@ public class MainActivity extends AppCompatActivity {
     private int challenge( Constants.Player player ) {
             int challengeCost;
             int challengeResultViewId;
-            int challengeGroupId;
+            int rollGroupId;
             int setterBoxId;
 
         CheckBox enableDebugCheckbox = findViewById( R.id.debugModeToggle );
         CheckBox challengeSetterCheckbox;
         if ( player == Constants.Player.ATTACKER ) {
-            challengeGroupId = R.id.atkChallengeGroup;
+            rollGroupId = R.id.atkRollGroup;
             challengeResultViewId = R.id.atkChallengeResult;
             setterBoxId = R.id.atkChallengeSetterCheckbox;
         } else {
-            challengeGroupId = R.id.defChallengeGroup;
+            rollGroupId = R.id.defRollGroup;
             challengeResultViewId = R.id.defChallengeResult;
             setterBoxId = R.id.defChallengeSetterCheckbox;
         }
 
-        challengeCost = UiHelper.getIntInputValue( challengeGroupId, R.id.challengeCost, this );
+        challengeCost = UiHelper.getIntInputValue( rollGroupId, R.id.challengeCost, this );
         challengeSetterCheckbox = findViewById( setterBoxId );
 
         int challengeRoll;
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
                                  challengeSetterCheckbox.isChecked() );
 
         if ( challengeSet ) {
-            challengeRoll = UiHelper.getIntInputValue( challengeGroupId, R.id.challengeSetterValue, this );
+            challengeRoll = UiHelper.getIntInputValue( rollGroupId, R.id.challengeSetterValue, this );
         } else {
             challengeRoll = rollDice( 1, 20 );
         }
@@ -261,14 +261,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void toggleChallenge( View view ) {
         CheckBox box = ( CheckBox ) view;
-        View parent = ( View ) view.getParent();
+        View parent = ( View ) view.getParent().getParent();
         Constants.DiceMode mode;
         CheckBox debugToggle;
         Constants.Player player;
 
-        if ( parent.getId() == R.id.atkChallengeGroup ) {
+        if ( parent.getId() == R.id.atkRollGroup ) {
             player = Constants.Player.ATTACKER;
-            debugToggle = findViewById(R.id.atkChallengeSetterCheckbox );
+            debugToggle = findViewById( R.id.atkChallengeSetterCheckbox );
         } else {
             player = Constants.Player.DEFENDER;
             debugToggle = findViewById( R.id.defChallengeSetterCheckbox );

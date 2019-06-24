@@ -25,9 +25,9 @@
     <string name="def_challenge_result_label">Defender challenge roll:</string>
     <string name="def_challenge_total_label">Defender roll after challenge:</string>
     <string name="no_def_option_label">No defensive option chosen</string>
-    <string name="dodge_result_label">Dodge modifier:</string>
-    <string name="deflect_result_label">Deflect modifier:</string>
-    <string name="intercept_result_label">Intercept modifier:</string>
+    <string name="dodge_result_label">Dodge result:</string>
+    <string name="deflect_result_label">Deflect result:</string>
+    <string name="intercept_result_label">Intercept result:</string>
     <string name="atk_base_damage_label">Attack base damage:</string>
     <string name="atk_damage_2_label">Attack damage after defense:</string>
     <string name="def_option_label">Defensive option:</string>
@@ -55,6 +55,7 @@
     <string name="armour_high_tag">ARMOUR_HIGH</string>
     <string name="challenge_toggle_tag">TOGGLE</string>
     <string name="error_toast_msg">Error: missing fields!</string>
+    <string name="double_challenge_success_message">Both challenges succeeded, please roll again</string>
     <string-array name="dice_count_options">
         <item>1</item>
         <item>2</item>
